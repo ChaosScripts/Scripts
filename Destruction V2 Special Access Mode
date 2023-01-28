@@ -1,0 +1,5 @@
+local admins = {
+	[108103952] = "Developer"
+}
+
+return admins

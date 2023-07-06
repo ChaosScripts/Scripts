@@ -573,7 +573,7 @@ end
 
 --- Executed when the X button is unhovered over
 function onXButtonUnhover()
-	TweenService:Create(CloseButton, TweenInfo.new(0.2), { BackgroundColor3 = Color3.fromRGB(37, 36, 38) }):Play()
+	TweenService:Create(CloseButton, TweenInfo.new(0.2), { BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549) }):Play()
 end
 
 --- Toggles the remote spy method (when button clicked)

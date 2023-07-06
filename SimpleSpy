@@ -199,7 +199,7 @@ Button_2.TextSize = 14
 
 TopBar.Name = "TopBar"
 TopBar.Parent = Background
-TopBar.BackgroundColor3 = Color3.fromRGB(37, 35, 38)
+TopBar.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
 TopBar.BorderSizePixel = 0
 TopBar.Size = UDim2.new(0, 450, 0, 19)
 

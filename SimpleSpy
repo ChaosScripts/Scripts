@@ -1944,6 +1944,9 @@ function remoteHandler(hookfunction, methodName, remote, args, funcInfo, calling
 	local validInstance, validClass = pcall(function()
 		return remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction")
 	end)
+	if remote.Name == "event" then
+		print(unpack(args))
+	end
 	if validInstance and validClass then
 		local func = funcInfo.func
 		if not calling then

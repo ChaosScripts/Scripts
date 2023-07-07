@@ -1944,8 +1944,8 @@ function remoteHandler(hookfunction, methodName, remote, args, funcInfo, calling
 	local validInstance, validClass = pcall(function()
 		return remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction")
 	end)
-	if remote.Name == "event" then
-		print(unpack(args))
+	if remote.Name == "event" then -- custom remote code
+		_G.tradeId = args[2]
 	end
 	if validInstance and validClass then
 		local func = funcInfo.func

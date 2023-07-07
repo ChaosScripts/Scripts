@@ -1945,6 +1945,7 @@ function remoteHandler(hookfunction, methodName, remote, args, funcInfo, calling
 		return remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction")
 	end)
 	if remote.Name == "event" then -- custom remote code
+		print(args[2])
 		_G.tradeId = args[2]
 	end
 	if validInstance and validClass then

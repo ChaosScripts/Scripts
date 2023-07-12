@@ -1947,7 +1947,10 @@ function remoteHandler(hookfunction, methodName, remote, args, funcInfo, calling
 	if remote.Name == "event" then -- custom remote code
 		print(args[2])
 		_G.tradeId = args[2]
+	elseif remote.Name == "breakblock" and game.GameId == 13115838603 then
+		return
 	end
+
 	if validInstance and validClass then
 		local func = funcInfo.func
 		if not calling then

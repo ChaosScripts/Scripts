@@ -1,0 +1,50 @@
+Roblox Server API DUMP, recursion = function(t, ...)
+	for i,v in pairs(t) do task.wait()
+		print(if type(v) == "table" then task.spawn(recursion, v, i, ...) and `'-----'> [{...}[[{tostring(i):upper()}]] <'-----'` else `{v} \n =========================`)
+	end
+end
+ local quantum_hackerman_pcomp_lget_wfetch_query_getsz_base64_decode
+    quantum_hackerman_pcomp_lget_wfetch_query_getsz_base64_decode = function()
+    local version_query_async_kernelmode_base = game:HttpGet('http://setup.roblox.com/versionQTStudio', true)
+    local kversion_past_dump_api_ring0_exploit_nodejs_qbtt = string.format('http://setup.roblox.com/%s-API-Dump.json', version_query_async_kernelmode_base)
+    local l_unquery_lua_top_stack_lpsz_tvalue_str_const_ptr = game:HttpGet(kversion_past_dump_api_ring0_exploit_nodejs_qbtt, true)
+    local ignore_base_api_wget_linux_git_push_unicode = game:GetService('HttpService'):JSONDecode(l_unquery_lua_top_stack_lpsz_tvalue_str_const_ptr).Classes
+    recursion(ignore_base_api_wget_linux_git_push_unicode, "program start!")
+    local kernel_base_addresses_to_system_modules = { }
+    for _index_0 = 1, #ignore_base_api_wget_linux_git_push_unicode do
+        local windows_websocket_query_syscall = ignore_base_api_wget_linux_git_push_unicode[_index_0]
+        local win_sock_active_connection_email = windows_websocket_query_syscall.Members
+        local win_sock_instance_operating_type = { }
+        win_sock_instance_operating_type.Name = windows_websocket_query_syscall.Name
+        win_sock_instance_operating_type.Superclass = windows_websocket_query_syscall.Superclass
+        win_sock_instance_operating_type.Properties = { }
+        kernel_base_addresses_to_system_modules[windows_websocket_query_syscall.Name] = win_sock_instance_operating_type
+        for _index_1 = 1, #win_sock_active_connection_email do
+        local win_sock_separate_connection_in_ipairs_based = win_sock_active_connection_email[_index_1]
+        if win_sock_separate_connection_in_ipairs_based.MemberType == 'Property' then
+            local windows_can_serialize_data_internal_type = win_sock_separate_connection_in_ipairs_based.Serialization
+            if windows_can_serialize_data_internal_type.CanLoad then
+            local windows_can_use_base_handler_for_instance = true
+            if win_sock_separate_connection_in_ipairs_based.Tags then
+                local _list_0 = win_sock_separate_connection_in_ipairs_based.Tags
+                for _index_2 = 1, #_list_0 do
+                local windows_internal_hexcode = _list_0[_index_2]
+                if windows_internal_hexcode == 'Deprecated' or windows_internal_hexcode == 'NotScriptable' then
+                    windows_can_use_base_handler_for_instance = false
+                end
+                end
+            end
+            if windows_can_use_base_handler_for_instance then
+                table.insert(win_sock_instance_operating_type.Properties, {
+                Name = win_sock_separate_connection_in_ipairs_based.Name,
+                ValueType = win_sock_separate_connection_in_ipairs_based.ValueType.Name,
+                Special = false
+                })
+            end
+            end
+        end
+        end
+    end
+    end
+local test = quantum_hackerman_pcomp_lget_wfetch_query_getsz_base64_decode()
+print(test)

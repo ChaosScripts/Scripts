@@ -1,2 +1,5 @@
 sudo apt install htop
 sudo apt-get install libpam-cracklib
+sudo apt-get install clamav clamtk rkhunter chkrootkit
+sudo apt-get install auditd
+sudo apt-get install nautilus

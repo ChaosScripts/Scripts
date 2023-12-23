@@ -275,7 +275,8 @@ task.spawn(function()
 				end
 			end
 			local oldPos = player.Character.PrimaryPart.Position
-			player.Character:MoveTo(chosen.Position)
+			--player.Character:MoveTo(chosen.Position)
+			player.Character.PrimaryPart.Position = chosen.Position -- because people like to add barriers
 			task.wait(.3)
 			firetouchinterest(player.Character.PrimaryPart, chosen, 0)
 			task.wait(.3)

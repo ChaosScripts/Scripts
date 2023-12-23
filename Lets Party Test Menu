@@ -277,8 +277,11 @@ task.spawn(function()
 			button.TextColor3 = Color3.fromRGB(0, 255)
 			activeCommands[i] = true
 			task.spawn(function()
-				while activeCommands[i] do task.wait(.2)
-					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 0)
+				workspace.SafePlate.Transparency = 1
+				workspace.SafePlate.CanCollide = false
+				while activeCommands[i] do task.wait()
+					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 1)
+					workspace.SafePlate.Position = player.Character.PrimaryPart.Position
 				end
 			end)
 		end,

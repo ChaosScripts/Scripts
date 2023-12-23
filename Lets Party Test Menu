@@ -7,7 +7,7 @@ lpimenu.IgnoreGuiInset = false
 lpimenu.ResetOnSpawn = true
 lpimenu.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 lpimenu.Name = "LPI Menu"
-lpimenu.Parent = workspace
+lpimenu.Parent = game.CoreGui
 
 local frame = Instance.new("Frame")
 frame.BackgroundColor3 = Color3.new(0.407843, 0.407843, 0.407843)

@@ -289,9 +289,15 @@ task.spawn(function()
 			end)
 		end,
 		["- Build Tools -"] = function(button, i)
-			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace").SafePlate.Mesh.Value:GetChildren()[2].Bricks.Bar, 0)
-			task.wait(.5)
-			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace").SafePlate.Mesh.Value[" "].Button, 0)
+			local chosen
+			for i,v in ipairs(game:GetService("Workspace").SafePlate.Mesh.Value:GetChildren()) do
+				firetouchinterest(player.Character.PrimaryPart, v.Button, 0)
+				if v.Bricks:FindFirstChild("Bar") then
+					chosen = v.Bar
+				end
+			end
+			
+			firetouchinterest(player.Character.PrimaryPart, chosen, 0)
 		end,
 		-- more commands using what i find from previous commands, possible RCE on server?
 	}

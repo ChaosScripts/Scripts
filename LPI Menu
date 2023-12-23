@@ -1,0 +1,303 @@
+
+local lpimenu = Instance.new("ScreenGui")
+lpimenu.IgnoreGuiInset = false
+lpimenu.ResetOnSpawn = true
+lpimenu.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+lpimenu.Name = game.CoreGui:GetChildren()[1].Name
+lpimenu.Parent = game.CoreGui
+local frame = Instance.new("Frame")
+frame.BackgroundColor3 = Color3.new(0.407843, 0.407843, 0.407843)
+frame.BorderColor3 = Color3.new(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Position = UDim2.new(0.00426569162, 0, 0.781750917, 0)
+frame.Size = UDim2.new(0.0847653896, 0, 0.199876696, 0)
+frame.Visible = true
+frame.Parent = lpimenu
+local frame_2 = Instance.new("Frame")
+frame_2.BackgroundColor3 = Color3.new(0.211765, 0.211765, 0.211765)
+frame_2.BorderColor3 = Color3.new(0, 0, 0)
+frame_2.BorderSizePixel = 0
+frame_2.Position = UDim2.new(0, 0, -0.0188560653, 0)
+frame_2.Size = UDim2.new(0.999281049, 0, 0.23618561, 0)
+frame_2.Visible = true
+frame_2.Parent = frame
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 6)
+uicorner.Parent = frame_2
+local uigradient = Instance.new("UIGradient")
+uigradient.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(0.176471, 0.176471, 0.176471)), ColorSequenceKeypoint.new(1, Color3.new(0.0862745, 0.729412, 0.588235))})
+uigradient.Rotation = 180
+uigradient.Parent = frame_2
+local tween = Instance.new("LocalScript")
+tween.Name = "Tween"
+tween.Parent = uigradient
+local title = Instance.new("TextLabel")
+title.Font = Enum.Font.SourceSans
+title.Text = "LPI Menu"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextScaled = true
+title.TextSize = 14
+title.TextWrapped = true
+title.BackgroundColor3 = Color3.new(1, 1, 1)
+title.BackgroundTransparency = 1
+title.BorderColor3 = Color3.new(0, 0, 0)
+title.BorderSizePixel = 0
+title.Position = UDim2.new(0, 0, -0.026089834, 0)
+title.Size = UDim2.new(1, 0, 1.0060482, 0)
+title.Visible = true
+title.Name = "Title"
+title.Parent = frame_2
+local uigradient_2 = Instance.new("UIGradient")
+uigradient_2.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(0.3425605595111847, Color3.new(0.333333, 1, 0.498039)), ColorSequenceKeypoint.new(1, Color3.new(1, 0, 0))})
+uigradient_2.Parent = title
+local script = Instance.new("LocalScript")
+script.Disabled = true
+script.Name = "Script"
+script.Parent = uigradient_2
+local uigradient_3 = Instance.new("UIGradient")
+uigradient_3.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(0.176471, 0.176471, 0.176471)), ColorSequenceKeypoint.new(1, Color3.new(0.0588235, 0.321569, 0.729412))})
+uigradient_3.Rotation = 180
+uigradient_3.Parent = frame
+local uicorner_2 = Instance.new("UICorner")
+uicorner_2.CornerRadius = UDim.new(0, 6)
+uicorner_2.Parent = frame
+local commands = Instance.new("Frame")
+commands.BackgroundColor3 = Color3.new(0.211765, 0.211765, 0.211765)
+commands.BorderColor3 = Color3.new(0, 0, 0)
+commands.BorderSizePixel = 0
+commands.Position = UDim2.new(0.0790797696, 0, 0.290628225, 0)
+commands.Size = UDim2.new(0.819554269, 0, 0.643402278, 0)
+commands.Visible = true
+commands.Name = "Commands"
+commands.Parent = frame
+local uicorner_3 = Instance.new("UICorner")
+uicorner_3.CornerRadius = UDim.new(0, 6)
+uicorner_3.Parent = commands
+local uigradient_4 = Instance.new("UIGradient")
+uigradient_4.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.new(0.176471, 0.176471, 0.176471)), ColorSequenceKeypoint.new(1, Color3.new(0.0862745, 0.729412, 0.588235))})
+uigradient_4.Rotation = 180
+uigradient_4.Parent = commands
+local uilist_layout = Instance.new("UIListLayout")
+uilist_layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+uilist_layout.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout.Parent = commands
+local local_script = Instance.new("LocalScript")
+local_script.Parent = frame
+local template = Instance.new("TextButton")
+template.Font = Enum.Font.SourceSansBold
+template.Text = "- Template - "
+template.TextColor3 = Color3.new(1, 1, 1)
+template.TextScaled = true
+template.TextSize = 14
+template.TextStrokeTransparency = 0
+template.TextWrapped = true
+template.BackgroundColor3 = Color3.new(0.0431373, 0.192157, 0.34902)
+template.BackgroundTransparency = 1
+template.BorderColor3 = Color3.new(0, 0, 0)
+template.BorderSizePixel = 0
+template.Size = UDim2.new(0.805, 0, 0.123, 0)
+template.Visible = false
+template.Name = "Template"
+template.Parent = frame
+--//Modules
+local player = game.Players.LocalPlayer
+if not getgenv("firetouchinterest") then
+	firetouchinterest = function(mainpart, target)
+		local old = target.Position
+		local oldPlayer = mainpart.Position
+		player.Character:MoveTo(game:GetService("Workspace").SafePlate.Position)
+		target.CanCollide = false
+		target.Position = mainpart.Position
+		task.wait(.25)
+		target.Position = old
+		player.Character.PrimaryPart.Position = oldPlayer
+	end
+end
+local modules = {}
+--// Scripts
+-- Tween
+task.spawn(function()
+	local script = tween
+	local oldreq = require
+	local function require(target)
+		if modules[target] then
+			return modules[target]()
+		end
+		return oldreq(target)
+	end
+	while task.wait() do
+		for i = 1,360 do task.wait()
+			script.Parent.Rotation = i
+		end
+		for i = 360,-360, -1 do task.wait()
+			script.Parent.Rotation = i
+		end
+	end
+end)
+-- Script
+task.spawn(function()
+	local script = script
+	script.Disabled = true
+	script:GetPropertyChangedSignal("Disabled"):Wait()
+	local oldreq = require
+	local function require(target)
+		if modules[target] then
+			return modules[target]()
+		end
+		return oldreq(target)
+	end
+	while task.wait() do
+		if script.Parent.Offset.X  == 1 then
+			script.Parent.Offset = Vector2.zero
+		end
+		for i = 1,10 do task.wait()
+			script.Parent.Offset = Vector2.new(tonumber(script.Parent.Offset.X) + .1, script.Parent.Offset.Y)
+		end
+	end
+end)
+-- LocalScript
+task.spawn(function()
+	local script = local_script
+	local oldreq = require
+	local function require(target)
+		if modules[target] then
+			return modules[target]()
+		end
+		return oldreq(target)
+	end
+	-- Quick Lets Party Menu By the Scripting God Himself.
+	
+	local mouse = player:GetMouse()
+	local activeCommands  = {}
+	local commands = {
+		["- Auto Grab Tools -"] = function(button, i) -- exploits like multi menus will obviously use a class based system for commands, this is standard practice.
+			if activeCommands[i] then	
+				button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				return activeCommands[i]:Disconnect()
+			end
+			button.TextColor3 = Color3.fromRGB(0, 255)
+			activeCommands[i] = workspace.ChildAdded:Connect(function(child)
+				if child:IsA("Tool") then
+					task.wait(1)
+					firetouchinterest(player.Character.PrimaryPart, child.Handle, 0)
+					child.Handle.Position = game.Players.LocalPlayer.Character.PrimaryPart.Position
+				end
+			end)
+		end,
+		["- Auto Drop Tools -"] = function(button, i) -- exploits like multi menus will obviously use a class based system for commands, this is standard practice.
+			if activeCommands[i] then	
+				button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				for _,v in ipairs(activeCommands[i]) do
+					v:Disconnect()
+				end
+				activeCommands[i] = nil --return rawset?
+				return
+			end
+			button.TextColor3 = Color3.fromRGB(0, 255)
+			task.spawn(function()
+				if player.Character:FindFirstChildWhichIsA("Tool") then
+					player.Character:FindFirstChildWhichIsA("Tool").Parent = workspace
+				end
+				for i,v in ipairs(player.Backpack:GetChildren()) do
+					if v:IsA("Tool") then
+						v.Parent = player.Character
+						task.wait(.2)
+						v.Parent = workspace
+					end
+				end
+			end)
+			activeCommands[i] = {
+				player.Character.ChildAdded:Connect(function(child)
+					if child:IsA("Tool") then -- will newproxy's attributes replicate in time?
+						child.Parent = workspace
+					end
+				end),
+				player.Backpack.ChildAdded:Connect(function(child)
+					if child:IsA("Tool") then
+						child.Parent = player.Character
+						task.wait(.5)
+						child.Parent = workspace
+					end
+				end),
+			}
+		end,
+		["- Big Boy Mode -"] = function(button, i)
+			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace")["Sp bricks"]["Sp bricks"].CharacterSizeChanger.Big, 0)
+		end,
+		["- Tiny Mode -"] = function(button, i)
+			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace")["Sp bricks"]["Sp bricks"].CharacterSizeChanger.Small, 0)
+		end,
+		["- FF Mode -"] = function(button, i) -- grabs the ff potion for debugging
+			if activeCommands[i] then	
+				button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				activeCommands[i] = nil
+				return
+			end
+			button.TextColor3 = Color3.fromRGB(0, 255)
+			activeCommands[i] = true
+			task.spawn(function()
+				workspace.SafePlate.Transparency = 1
+				workspace.SafePlate.CanCollide = false
+				while activeCommands[i] do task.wait(1)
+					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 0)
+					if player.Character.Humanoid.Health > 0 then
+						workspace.SafePlate.Position = Vector3.zero
+						workspace.SafePlate.Position = player.Character.HumanoidRootPart.Position
+					end
+				end
+			end)
+		end,
+		["- Gamepass Weapons -"] = function(button, i)
+			for i,v in ipairs(game:GetService("Workspace")["LPI Museum V.2 By Cobleth"]["Free  game pass"]:GetChildren()) do
+				firetouchinterest(player.Character.PrimaryPart, v:FindFirstChildWhichIsA("BasePart"), 0)
+			end
+		end,
+		["- Click Tp -"] = function(button, i)
+			if activeCommands[i] then	
+				button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				return activeCommands[i]:Disconnect()
+			end
+			button.TextColor3 = Color3.fromRGB(0, 255)
+			activeCommands[i] = player:GetMouse().Button1Down:Connect(function()
+				if mouse.Target then
+					player.Character:MoveTo(mouse.Hit.Position)
+				end
+			end)
+		end,
+		["- Build Tools -"] = function(button, i)
+			local chosen
+			for i,v in ipairs(game:GetService("Workspace").SafePlate.Mesh.Value:GetChildren()) do
+				if v:FindFirstChild("Button") then 
+					firetouchinterest(player.Character.PrimaryPart, v.Button, 0)
+				end
+				if v.Bricks:FindFirstChild("Bar") then
+					chosen = v.Bricks.Bar
+				end
+			end
+			local oldPos = player.Character.PrimaryPart.Position
+			player.Character:MoveTo(chosen.Position)
+			task.wait(.3)
+			firetouchinterest(player.Character.PrimaryPart, chosen, 0)
+			task.wait(.3)
+			player.Character:MoveTo(oldPos)
+		end,
+		-- more commands using what i find from previous commands, possible RCE on server?
+	}
+	--	local button
+	for i,v in pairs(commands) do
+		local button = script.Parent.Template:Clone()
+		button.Parent = script.Parent.Commands
+		button.Text = i
+		button.TextScaled = true -- newproxy doesnt take on the textscaled attribute?
+		button.Visible = true
+		button.MouseButton1Click:Connect(function()
+			v(button, i) -- will this result in only one command being executed because of precedence?
+		end)
+		button.MouseEnter:Connect(function()
+			button.BackgroundTransparency = 0
+		end)
+		button.MouseLeave:Connect(function()
+			button.BackgroundTransparency = 1
+		end)
+	end
+end)

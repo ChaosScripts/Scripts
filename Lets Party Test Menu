@@ -116,13 +116,17 @@ template.Name = "Template"
 template.Parent = frame
 
 --//Modules
+local player = game.Players.LocalPlayer
 if not getgenv("firetouchinterest") then
 	firetouchinterest = function(mainpart, target)
 		local old = target.Position
+		local oldPlayer = mainpart.Position
+		player.Character:MoveTo(game:GetService("Workspace").SafePlate.Position)
 		target.CanCollide = false
 		target.Position = mainpart.Position
 		task.wait(.25)
 		target.Position = old
+		player.Character.PrimaryPart.Position = oldPlayer
 	end
 end
 local modules = {}
@@ -199,7 +203,7 @@ task.spawn(function()
 
 	-- Quick Lets Party Menu By the Scripting God Himself.
 
-	local player = game.Players.LocalPlayer
+	
 	local mouse = player:GetMouse()
 
 

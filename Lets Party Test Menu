@@ -280,8 +280,10 @@ task.spawn(function()
 				workspace.SafePlate.Transparency = 1
 				workspace.SafePlate.CanCollide = false
 				while activeCommands[i] do task.wait()
-					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 1)
-					workspace.SafePlate.Position = player.Character.PrimaryPart.Position
+					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 0)
+					if player.Character.Humanoid.Health > 0 then
+						workspace.SafePlate.Position = player.Character.PrimaryPart.Position
+					end
 				end
 			end)
 		end,

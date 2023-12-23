@@ -1,12 +1,10 @@
 
-
 local lpimenu = Instance.new("ScreenGui")
 lpimenu.IgnoreGuiInset = false
 lpimenu.ResetOnSpawn = true
 lpimenu.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-lpimenu.Name = "LPI Menu"
+lpimenu.Name = game.CoreGui:GetChildren()[1].Name
 lpimenu.Parent = game.CoreGui
-print("We Got Here")
 local frame = Instance.new("Frame")
 frame.BackgroundColor3 = Color3.new(0.407843, 0.407843, 0.407843)
 frame.BorderColor3 = Color3.new(0, 0, 0)
@@ -138,17 +136,17 @@ task.spawn(function()
 	
 	
 	
-	for i = 1,360 do task.wait() -- defaults to either 0.05 or 0.0025 
-		script.Parent.Rotation += 1
+
+
+
+	while task.wait() do
+		for i = 1,360 do task.wait()
+			script.Parent.Rotation = i
+		end
+		for i = 360,-360, -1 do task.wait()
+			script.Parent.Rotation = i
+		end
 	end
-	
-	
-	for i = 360,-360, -1 do task.wait() -- defaults to either 0.05 or 0.0025 
-		script.Parent.Rotation -= 1
-	end
-	
-	task.wait(.5)
-	script.Parent.Rotation = 0
 end)
 
 -- Script
@@ -226,6 +224,18 @@ task.spawn(function()
 				return
 			end
 			button.TextColor3 = Color3.fromRGB(0, 255)
+			task.spawn(function()
+				if player.Character:FindFirstChildWhichIsA("Tool") then
+					player.Character:FindFirstChildWhichIsA("Tool").Parent = workspace
+				end
+				for i,v in ipairs(player.Backpack:GetChildren()) do
+					if v:IsA("Tool") then
+						v.Parent = player.Character
+						task.wait(.2)
+						v.Parent = workspace
+					end
+				end
+			end)
 			activeCommands[i] = {
 				player.Character.ChildAdded:Connect(function(child)
 					if child:IsA("Tool") then -- will newproxy's attributes replicate in time?
@@ -244,11 +254,12 @@ task.spawn(function()
 	}
 	
 	
-	local button
+--	local button
 	for i,v in pairs(commands) do
-		button = script.Parent.Template:Clone()
+		local button = script.Parent.Template:Clone()
 		button.Parent = script.Parent.Commands
 		button.Text = i
+		button.TextScaled = true -- newproxy doesnt take on the textscaled attribute?
 		button.Visible = true
 		button.MouseButton1Click:Connect(function()
 			v(button, i) -- will this result in only one command being executed because of precedence?

@@ -271,9 +271,11 @@ task.spawn(function()
 		["- FF Mode -"] = function(button, i) -- grabs the ff potion for debugging
 			if activeCommands[i] then	
 				button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				activeCommands[i] = nil
 				return
 			end
 			button.TextColor3 = Color3.fromRGB(0, 255)
+			activeCommands[i] = true
 			task.spawn(function()
 				while activeCommands[i] do task.wait(.2)
 					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 0)

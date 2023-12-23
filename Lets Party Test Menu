@@ -116,7 +116,15 @@ template.Name = "Template"
 template.Parent = frame
 
 --//Modules
-
+if not getgenv("firetouchinterest") then
+	firetouchinterest = function(mainpart, target)
+		local old = target.Position
+		target.CanCollide = false
+		target.Position = mainpart.Position
+		task.wait(.25)
+		target.Position = old
+	end
+end
 local modules = {}
 
 --// Scripts
@@ -203,7 +211,8 @@ task.spawn(function()
 			if activeCommands[i] then	
 				button.TextColor3 = Color3.fromRGB(255, 255, 255)
 				activeCommands[i] = nil
-				return activeCommands[i]:Disconnect()
+				activeCommands[i]:Disconnect()
+				return
 			end
 			button.TextColor3 = Color3.fromRGB(0, 255)
 			activeCommands[i] = workspace.ChildAdded:Connect(function(child)
@@ -269,7 +278,8 @@ task.spawn(function()
 			if activeCommands[i] then	
 				button.TextColor3 = Color3.fromRGB(255, 255, 255)
 				activeCommands[i] = nil
-				return activeCommands[i]:Disconnect()
+				activeCommands[i]:Disconnect()
+				return
 			end
 			button.TextColor3 = Color3.fromRGB(0, 255)
 			activeCommands[i] = player:GetMouse().Button1Down:Connect(function()
@@ -283,7 +293,7 @@ task.spawn(function()
 			task.wait(.5)
 			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace").SafePlate.Mesh.Value[" "].Button, 0)
 		end,
-		-- more commands using what i find from previous commands
+		-- more commands using what i find from previous commands, possible RCE on server?
 	}
 
 

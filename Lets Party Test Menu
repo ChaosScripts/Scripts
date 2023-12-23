@@ -1,7 +1,5 @@
 
 
---// Instances
-
 local lpimenu = Instance.new("ScreenGui")
 lpimenu.IgnoreGuiInset = false
 lpimenu.ResetOnSpawn = true

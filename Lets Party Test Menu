@@ -298,8 +298,12 @@ task.spawn(function()
 					chosen = v.Bricks.Bar
 				end
 			end
-			
+			local oldPos = player.Character.PrimaryPart.Position
+			player.Character:MoveTo(chosen.Position)
+			task.wait(.3)
 			firetouchinterest(player.Character.PrimaryPart, chosen, 0)
+			task.wait(.3)
+			player.Character:MoveTo(oldPos)
 		end,
 		-- more commands using what i find from previous commands, possible RCE on server?
 	}

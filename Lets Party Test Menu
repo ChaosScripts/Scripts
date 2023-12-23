@@ -291,7 +291,9 @@ task.spawn(function()
 		["- Build Tools -"] = function(button, i)
 			local chosen
 			for i,v in ipairs(game:GetService("Workspace").SafePlate.Mesh.Value:GetChildren()) do
-				firetouchinterest(player.Character.PrimaryPart, v.Button, 0)
+				if v:FindFirstChild("Button") then 
+					firetouchinterest(player.Character.PrimaryPart, v.Button, 0)
+				end
 				if v.Bricks:FindFirstChild("Bar") then
 					chosen = v.Bricks.Bar
 				end

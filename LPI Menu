@@ -178,7 +178,7 @@ task.spawn(function()
 			button.TextColor3 = Color3.fromRGB(0, 255)
 			activeCommands[i] = workspace.ChildAdded:Connect(function(child)
 				if child:IsA("Tool") then
-					task.wait(1)
+					task.wait(0.05)
 					firetouchinterest(player.Character.PrimaryPart, child.Handle, 0)
 					child.Handle.Position = game.Players.LocalPlayer.Character.PrimaryPart.Position
 				end

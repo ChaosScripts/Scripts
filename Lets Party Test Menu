@@ -282,7 +282,7 @@ task.spawn(function()
 				while activeCommands[i] do task.wait(1)
 					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 0)
 					if player.Character.Humanoid.Health > 0 then
-						workspace.SafePlate.Position Vector3.Zero 
+						workspace.SafePlate.Position Vector3.zero 
 						workspace.SafePlate.Position = player.Character.HumanoidRootPart.Position
 					end
 				end

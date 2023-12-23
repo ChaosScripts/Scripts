@@ -214,9 +214,7 @@ task.spawn(function()
 		["- Auto Grab Tools -"] = function(button, i) -- exploits like multi menus will obviously use a class based system for commands, this is standard practice.
 			if activeCommands[i] then	
 				button.TextColor3 = Color3.fromRGB(255, 255, 255)
-				activeCommands[i] = nil
-				activeCommands[i]:Disconnect()
-				return
+				return activeCommands[i]:Disconnect()
 			end
 			button.TextColor3 = Color3.fromRGB(0, 255)
 			activeCommands[i] = workspace.ChildAdded:Connect(function(child)
@@ -281,9 +279,7 @@ task.spawn(function()
 		["- Click Tp -"] = function(button, i)
 			if activeCommands[i] then	
 				button.TextColor3 = Color3.fromRGB(255, 255, 255)
-				activeCommands[i] = nil
-				activeCommands[i]:Disconnect()
-				return
+				return activeCommands[i]:Disconnect()
 			end
 			button.TextColor3 = Color3.fromRGB(0, 255)
 			activeCommands[i] = player:GetMouse().Button1Down:Connect(function()
@@ -293,7 +289,7 @@ task.spawn(function()
 			end)
 		end,
 		["- Build Tools -"] = function(button, i)
-			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace").SafePlate.Mesh.Value[" "].Bricks.Bar, 0)
+			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace").SafePlate.Mesh.Value:GetChildren()[2].Bricks.Bar, 0)
 			task.wait(.5)
 			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace").SafePlate.Mesh.Value[" "].Button, 0)
 		end,

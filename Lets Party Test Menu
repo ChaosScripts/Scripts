@@ -293,7 +293,7 @@ task.spawn(function()
 			for i,v in ipairs(game:GetService("Workspace").SafePlate.Mesh.Value:GetChildren()) do
 				firetouchinterest(player.Character.PrimaryPart, v.Button, 0)
 				if v.Bricks:FindFirstChild("Bar") then
-					chosen = v.Bar
+					chosen = v.Bricks.Bar
 				end
 			end
 			

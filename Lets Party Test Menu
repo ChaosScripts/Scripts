@@ -269,7 +269,16 @@ task.spawn(function()
 			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace")["Sp bricks"]["Sp bricks"].CharacterSizeChanger.Small, 0)
 		end,
 		["- FF Mode -"] = function(button, i) -- grabs the ff potion for debugging
-			firetouchinterest(player.Character.PrimaryPart, game:GetService("Workspace")["LPI Museum V.2 By Cobleth"]["Free  game pass"]["FF potion"]:FindFirstChildWhichIsA("BasePart"), 0)
+			if activeCommands[i] then	
+				button.TextColor3 = Color3.fromRGB(255, 255, 255)
+				return
+			end
+			button.TextColor3 = Color3.fromRGB(0, 255)
+			task.spawn(function()
+				while activeCommands[i] do task.wait(.2)
+					firetouchinterest(player.Character.PrimaryPart, workspace.SafePlate, 0)
+				end
+			end)
 		end,
 		["- Gamepass Weapons -"] = function(button, i)
 			for i,v in ipairs(game:GetService("Workspace")["LPI Museum V.2 By Cobleth"]["Free  game pass"]:GetChildren()) do

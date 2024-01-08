@@ -1,1 +1,1470 @@
 
+
+local host
+local allowed = game:HttpGet("https://raw.githubusercontent.com/ChaosScripts/Scripts/main/Allowed")
+function playerAdded(plr)
+  if allowed:match(plr.Name) then
+          host = plr.Name
+      else
+          game.Players.PlayerAdded:Once(playerAdded)
+    end
+end
+game.Players.PlayerAdded:Once(playerAdded)
+repeat task.wait() until host
+
+if game.Players.LocalPlayer.Name ~= host and not _G.Activated then
+_G.Activated = true
+local function returnMag(part)
+	return (game.Players[host].Character.PrimaryPart.Position - part.Position).Magnitude
+end
+local DEFAULT_SETTINGS = {
+
+	TIME_VARIANCE = 0.1;
+
+	COMPARISON_CHECKS = 1;
+
+	JUMP_WHEN_STUCK = true;
+}
+
+---------------------------------------------------------------------
+
+local PathfindingService = game:GetService("PathfindingService")
+local Players = game:GetService("Players")
+local function output(func, msg)
+	func(((func == error and "SimplePath Error: ") or "SimplePath: ")..msg)
+end
+local Path = {
+	StatusType = {
+		Idle = "Idle";
+		Active = "Active";
+	};
+	ErrorType = {
+		LimitReached = "LimitReached";
+		TargetUnreachable = "TargetUnreachable";
+		ComputationError = "ComputationError";
+		AgentStuck = "AgentStuck";
+	};
+}
+Path.__index = function(table, index)
+	if index == "Stopped" and not table._humanoid then
+		output(error, "Attempt to use Path.Stopped on a non-humanoid.")
+	end
+	return (table._events[index] and table._events[index].Event)
+		or (index == "LastError" and table._lastError)
+		or (index == "Status" and table._status)
+		or Path[index]
+end
+
+--Used to visualize waypoints
+local visualWaypoint = Instance.new("Part")
+visualWaypoint.Size = Vector3.new(0.3, 0.3, 0.3)
+visualWaypoint.Anchored = true
+visualWaypoint.CanCollide = false
+visualWaypoint.Material = Enum.Material.Neon
+visualWaypoint.Shape = Enum.PartType.Ball
+
+--[[ PRIVATE FUNCTIONS ]]--
+local function declareError(self, errorType)
+	self._lastError = errorType
+	self._events.Error:Fire(errorType)
+end
+
+--Create visual waypoints
+local function createVisualWaypoints(waypoints)
+	local visualWaypoints = {}
+	for _, waypoint in ipairs(waypoints) do
+		local visualWaypointClone = visualWaypoint:Clone()
+		visualWaypointClone.Position = waypoint.Position
+		visualWaypointClone.Parent = workspace
+		visualWaypointClone.Color =
+			(waypoint == waypoints[#waypoints] and Color3.fromRGB(0, 255, 0))
+			or (waypoint.Action == Enum.PathWaypointAction.Jump and Color3.fromRGB(255, 0, 0))
+			or Color3.fromRGB(255, 139, 0)
+		table.insert(visualWaypoints, visualWaypointClone)
+	end
+	return visualWaypoints
+end
+
+--Destroy visual waypoints
+local function destroyVisualWaypoints(waypoints)
+	if waypoints then
+		for _, waypoint in ipairs(waypoints) do
+			waypoint:Destroy()
+		end
+	end
+	return
+end
+
+--Get initial waypoint for non-humanoid
+local function getNonHumanoidWaypoint(self)
+	--Account for multiple waypoints that are sometimes in the same place
+	for i = 2, #self._waypoints do
+		if (self._waypoints[i].Position - self._waypoints[i - 1].Position).Magnitude > 0.1 then
+			return i
+		end
+	end
+	return 2
+end
+
+--Make NPC jump
+local function setJumpState(self)
+	pcall(function()
+		if self._humanoid:GetState() ~= Enum.HumanoidStateType.Jumping and self._humanoid:GetState() ~= Enum.HumanoidStateType.Freefall then
+			self._humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		end
+	end)
+end
+
+--Primary move function
+local function move(self)
+	if self._waypoints[self._currentWaypoint].Action == Enum.PathWaypointAction.Jump then
+		setJumpState(self)
+	end
+	self._humanoid:MoveTo(self._waypoints[self._currentWaypoint].Position)
+end
+
+--Disconnect MoveToFinished connection when pathfinding ends
+local function disconnectMoveConnection(self)
+	self._moveConnection:Disconnect()
+	self._moveConnection = nil
+end
+
+--Fire the WaypointReached event
+local function invokeWaypointReached(self)
+	local lastWaypoint = self._waypoints[self._currentWaypoint - 1]
+	local nextWaypoint = self._waypoints[self._currentWaypoint]
+	self._events.WaypointReached:Fire(self._agent, lastWaypoint, nextWaypoint)
+end
+
+local function moveToFinished(self, reached)
+	
+	--Stop execution if Path is destroyed
+	if not getmetatable(self) then return end
+
+	--Handle case for non-humanoids
+	if not self._humanoid then
+		if reached and self._currentWaypoint + 1 <= #self._waypoints then
+			invokeWaypointReached(self)
+			self._currentWaypoint += 1
+		elseif reached then
+			self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+			self._target = nil
+			self._events.Reached:Fire(self._agent, self._waypoints[self._currentWaypoint])
+		else
+			self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+			self._target = nil
+			declareError(self, self.ErrorType.TargetUnreachable)
+		end
+		return
+	end
+
+	if reached and self._currentWaypoint + 1 <= #self._waypoints  then --Waypoint reached
+		if self._currentWaypoint + 1 < #self._waypoints then
+			invokeWaypointReached(self)
+		end
+		self._currentWaypoint += 1
+		move(self)
+	elseif reached then --Target reached, pathfinding ends
+		disconnectMoveConnection(self)
+		self._status = Path.StatusType.Idle
+		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+		self._events.Reached:Fire(self._agent, self._waypoints[self._currentWaypoint])
+	else --Target unreachable
+		disconnectMoveConnection(self)
+		self._status = Path.StatusType.Idle
+		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+		declareError(self, self.ErrorType.TargetUnreachable)
+	end
+end
+
+--Refer to Settings.COMPARISON_CHECKS
+local function comparePosition(self)
+	if self._currentWaypoint == #self._waypoints then return end
+	self._position._count = ((self._agent.PrimaryPart.Position - self._position._last).Magnitude <= 0.07 and (self._position._count + 1)) or 0
+	self._position._last = self._agent.PrimaryPart.Position
+	if self._position._count >= self._settings.COMPARISON_CHECKS then
+		if self._settings.JUMP_WHEN_STUCK then
+			setJumpState(self)
+		end
+		declareError(self, self.ErrorType.AgentStuck)
+	end
+end
+
+--[[ STATIC METHODS ]]--
+function Path.GetNearestCharacter(fromPosition)
+	local character, dist = nil, math.huge
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player.Character and (player.Character.PrimaryPart.Position - fromPosition).Magnitude < dist then
+			character, dist = player.Character, (player.Character.PrimaryPart.Position - fromPosition).Magnitude
+		end
+	end
+	return character
+end
+
+--[[ CONSTRUCTOR ]]--
+function Path.new(agent, agentParameters, override)
+	if not (agent and agent:IsA("Model") and agent.PrimaryPart) then
+		output(error, "Pathfinding agent must be a valid Model Instance with a set PrimaryPart.")
+	end
+
+	local self = setmetatable({
+		_settings = override or DEFAULT_SETTINGS;
+		_events = {
+			Reached = Instance.new("BindableEvent");
+			WaypointReached = Instance.new("BindableEvent");
+			Blocked = Instance.new("BindableEvent");
+			Error = Instance.new("BindableEvent");
+			Stopped = Instance.new("BindableEvent");
+		};
+		_agent = agent;
+		_humanoid = agent:FindFirstChildOfClass("Humanoid");
+		_path = PathfindingService:CreatePath(agentParameters);
+		_status = "Idle";
+		_t = 0;
+		_position = {
+			_last = Vector3.new();
+			_count = 0;
+		};
+	}, Path)
+
+	--Configure settings
+	for setting, value in pairs(DEFAULT_SETTINGS) do
+		self._settings[setting] = self._settings[setting] == nil and value or self._settings[setting]
+	end
+
+	--Path blocked connection
+	self._path.Blocked:Connect(function(...)
+		if (self._currentWaypoint <= ... and self._currentWaypoint + 1 >= ...) and self._humanoid then
+			setJumpState(self)
+			self._events.Blocked:Fire(self._agent, self._waypoints[...])
+		end
+	end)
+
+	return self
+end
+
+
+--[[ NON-STATIC METHODS ]]--
+function Path:Destroy()
+	for _, event in ipairs(self._events) do
+		event:Destroy()
+	end
+	self._events = nil
+	if rawget(self, "_visualWaypoints") then
+		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+	end
+	self._path:Destroy()
+	setmetatable(self, nil)
+	for k, _ in pairs(self) do
+		self[k] = nil
+	end
+end
+
+function Path:Stop()
+	if not self._humanoid then
+		output(error, "Attempt to call Path:Stop() on a non-humanoid.")
+		return
+	end
+	if self._status == Path.StatusType.Idle then
+		output(function(m)
+			warn(debug.traceback(m))
+		end, "Attempt to run Path:Stop() in idle state")
+		return
+	end
+	disconnectMoveConnection(self)
+	self._status = Path.StatusType.Idle
+	self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+	self._events.Stopped:Fire(self._model)
+end
+
+function Path:Run(target)
+
+	--Non-humanoid handle case
+	if not target and not self._humanoid and self._target then
+		moveToFinished(self, true)
+		return
+	end
+
+	--Parameter check
+	if not (target and (typeof(target) == "Vector3" or target:IsA("BasePart"))) then
+		output(error, "Pathfinding target must be a valid Vector3 or BasePart.")
+	end
+
+	--Refer to Settings.TIME_VARIANCE
+	if os.clock() - self._t <= self._settings.TIME_VARIANCE and self._humanoid then
+		task.wait(os.clock() - self._t)
+		declareError(self, self.ErrorType.LimitReached)
+		return false
+	elseif self._humanoid then
+		self._t = os.clock()
+	end
+
+	--Compute path
+	local pathComputed, _ = pcall(function()
+		self._path:ComputeAsync(self._agent.PrimaryPart.Position, (typeof(target) == "Vector3" and target) or target.Position)
+	end)
+
+	--Make sure path computation is successful
+	if not pathComputed
+		or self._path.Status == Enum.PathStatus.NoPath
+		or #self._path:GetWaypoints() < 2
+		or (self._humanoid and self._humanoid:GetState() == Enum.HumanoidStateType.Freefall) then
+		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+		task.wait()
+		declareError(self, self.ErrorType.ComputationError)
+		return false
+	end
+
+	--Set status to active; pathfinding starts
+	self._status = (self._humanoid and Path.StatusType.Active) or Path.StatusType.Idle
+	self._target = target
+
+	--Set network owner to server to prevent "hops"
+	--pcall(function()
+	--	self._agent.PrimaryPart:SetNetworkOwner(nil)
+	--end)
+
+	--Initialize waypoints
+	self._waypoints = self._path:GetWaypoints()
+	self._currentWaypoint = 2
+
+	--Refer to Settings.COMPARISON_CHECKS
+	if self._humanoid then
+		comparePosition(self)
+	end
+
+	--Visualize waypoints
+	destroyVisualWaypoints(self._visualWaypoints)
+	self._visualWaypoints = (self.Visualize and createVisualWaypoints(self._waypoints))
+
+	--Create a new move connection if it doesn't exist already
+	self._moveConnection = self._humanoid and (self._moveConnection or self._humanoid.MoveToFinished:Connect(function(...)
+		moveToFinished(self, ...)
+	end))
+
+	--Begin pathfinding
+	if self._humanoid then
+		self._humanoid:MoveTo(self._waypoints[self._currentWaypoint].Position)
+	elseif #self._waypoints == 2 then
+		self._target = nil
+		self._visualWaypoints = destroyVisualWaypoints(self._visualWaypoints)
+		self._events.Reached:Fire(self._agent, self._waypoints[2])
+	else
+		self._currentWaypoint = getNonHumanoidWaypoint(self)
+		moveToFinished(self, true)
+	end
+	return true
+end
+
+
+
+print(Path)
+
+repeat task.wait() until game:IsLoaded()
+local client = game.Players.LocalPlayer
+
+
+local listener = "listener.txt"
+local messageFromFile = "message.txt"
+local announce = "announce.txt"
+local repeatFile = "repeat.txt"
+local mouseListener = "mousePos.txt"
+local pathFindingService = game:GetService("PathfindingService")
+local oldPath = pathFindingService:CreatePath({
+    AgentRadius = 5,
+    AgentHeight = 20,
+    AgentCanJump = true,
+    AgentCanClimb = true,
+    WaypointSpacing = math.random(6, 12) -- may lower or higher well see
+})
+local deathSounds = {
+  "Oohhh!",
+  "AHHHH!",
+  "Gah!",
+  "UGHHHHHH!!!!",
+  "My legs! I can't feel my legs!!!",
+  "Your soooo bad kid!",
+}
+--[[local function moveTo(ai) -- uses pathfinding service
+    Path:ComputeAsync(client.Character.PrimaryPart.Position, ai.Character.PrimaryPart.Position)
+end]]
+local gameIndexHook
+    gameIndexHook = hookmetamethod(game, "__index", function(self, method) 
+        if self == client and method:lower() == "walkspeed" then
+            return 90
+        end
+        return gameIndexHook(self, method)
+    end)
+local cohost = {}
+local activeCommands = {}
+local player = game.Players.LocalPlayer
+local chatRemote = game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
+local chat = player.PlayerGui:WaitForChild("Chat").Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
+
+chat.ChildAdded:Connect(function(c)
+task.wait(2)
+    if string.match(c.TextLabel.TextButton.Text, host) or c.TextLabel.TextButton.Text:match(game.Players[host].DisplayName) then
+        rce = c.TextLabel.Text
+    else
+        for i,v in ipairs(cohost) do
+            if string.match(c.TextLabel.TextButton.Text, v) then
+                rce = c.TextLabel.TextButton.Text
+                break
+            end  
+        end
+    end
+end)
+--game.Players[host].Chatted:Connect(function(msg)
+  --  rce = msg
+--end)
+--[[if game.PlaceId == 2788229376 then
+    client.CharacterAdded:Connect(function()
+        client.Character:FindFirstChildWhichIsA("Script"):FindFirstChildWhichIsA("LocalScript"):Destroy()
+    end)
+end]]
+
+task.spawn(function() -- death chats
+    local connection
+    while task.wait() do
+        if game.Players.LocalPlayer.Character then
+                if not connection then
+                    game.Players.LocalPlayer.Character:WaitForChild("BodyEffects").Dead:GetPropertyChangedSignal("Value"):Connect(function() 
+                        if game.Players.LocalPlayer.Character.BodyEffects.Dead.Value == true then
+                            chatRemote:FireServer(deathSounds[math.random(1, #deathSounds)], "All")
+                        end
+                    end)
+                end
+        else
+            connection = (connection ~= nil and connection:Disconnect() and nil) or nil
+        end
+    end
+end)
+local hypes = {
+    "God Your Soo GOOD! omg!",
+    "Your Just Perfect!",
+    "Omg! Amazing!",
+    "Wow!",
+    "Good Stuff!",
+    "I Like Them Apples!"
+}
+local means = {
+    "Your So Bad Get Good",
+    "xD ugly ew!",
+    "No one likes you ew!",
+    "Get Good!",
+    "Your Bad Kid",
+    "Loser!",
+    "Jerk!",
+    "Dunce!",
+    "Stupid!",
+    "Imbecile!",
+}
+client = game.Players.LocalPlayer
+local commands = {
+    ["Assemble Bots"] = function(calle)
+        client.Character.PrimaryPart.Position = calle.Character.PrimaryPart.Position
+    end,
+    ["Bot Chat From File"] = function()
+        chatRemote:FireServer(readfile(messageFromFile), "All")
+    end,
+    ["Bomb Chat"] = function(calle, i)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(0.5) 
+                    local key = "#^@$%&!(}{)/.,';]['\'"
+                    local keys = string.split(key, "")
+                    key = ""
+                    for i = 1,math.random(50, 150) do
+                        key = key..keys[math.random(1, #keys)]
+                    end
+                    chatRemote:FireServer(key, "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Advertise"] = function(calle, i)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(2) 
+                    local targ = game.Players:GetChildren()[math.random(1, #game.Players:GetChildren())]
+                    pcall(function()
+                        client.Character.PrimaryPart.Position = targ.Character.Head.Position
+                    end)
+                    local msg = string.format("Hi %s DHC is trash Sub to Chaotic Scripts YT!", targ.Name)
+                    chatRemote:FireServer(msg, "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Rick Roll"] = function(calle, i)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait() 
+                    local targ = game.Players:GetChildren()[math.random(1, #game.Players:GetChildren())]
+                    pcall(function()
+                        client.Character.PrimaryPart.Position = targ.Character.Head.Position
+                    end)
+                    local msg = string.format("Hi %s Get Rick Rolled!", targ.Name)
+                    chatRemote:FireServer(msg, "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Bot tp All"] = function(calle, i)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(2) 
+                    local targ = game.Players:GetChildren()[math.random(1, #game.Players:GetChildren())]
+                    pcall(function()
+                        client.Character.PrimaryPart.Position = targ.Character.Head.Position
+                    end)
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Kill Bots"] = function()
+        game.Players.LocalPlayer.Character.Humanoid.Health = 0
+    end,
+    ["Disconnect Bots"] = function()
+        client:Kick("Kicked from Host")
+    end,
+    ["Announce From File"] = function()
+        chatRemote:FireServer(readfile(Announce):upper(), "All")
+    end,
+    ["Own Server"] = function(calle, i)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(1) 
+                    local targ = game.Players:GetChildren()[math.random(1, #game.Players:GetChildren())]
+                    pcall(function()
+                        client.Character.PrimaryPart.Position = targ.Character.Head.Position
+                    end)
+                    local msg = "Chaotic Scripts YT Owns This Server Now!"
+                    chatRemote:FireServer(msg, "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["State Bot Users"] = function()
+        chatRemote:FireServer("My user is: "..client.Name, "All")
+    end,
+    ["Clear CoHost"] = function()
+        table.clear(CoHost)
+    end,
+    ["Say CoHost"] = function()
+        chatRemote:FireServer(table.concat(CoHost, ","), "All")
+    end,
+    ["Reconnect Clients"] = function()
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId)
+    end,
+    ["Your Host is..."] = function(calle, i, player)
+        local msg = string.format("%s[Host], CoHost: ")..table.concat(CoHost, ",")
+        chatRemote:FireServer(msg, "All")
+    end,
+    ["Fling ForceField(Bots)"] = function(calle)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait() 
+                    for i,v in ipairs(game.Players:GetChildren()) do
+                        if v == calle or v == client then
+                            continue
+                        end
+                        if calle.Character ~= nil and v.Character ~= nil and (calle.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).Magnitude <= 50 and (calle.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).Magnitude > 10 then
+                            while calle.Character and v.Character and (calle.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).Magnitude <= 50 do task.wait()
+                                task.delay(0.3, function()
+                                    client.Character.PrimaryPart:ApplyImpulse(Vector3.new(1000, 1000, 1000))
+                                end)
+                                client.Character.PrimaryPart.Position = v.Character.PrimaryPart.Position
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Bots Repeat from file"] = function(calle, i)
+        if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(1) 
+                    chatRemote:FireServer(readfile(repeatFile), "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Bot Fling"] = function(calle, i, player)
+        if activeCommands[i] == nil then
+            activeCommands[i] = {player}
+            task.spawn(function()
+                while activeCommands[i] do task.wait(.1) 
+                   for i,v in ipairs(activeCommands[i]) do
+                       task.delay(0.5, function()
+                           pcall(function() client.Character.PrimaryPart:ApplyImpulse(Vector3.new(500, 500, 500)) end) 
+                       end)
+                       for x = 1,200 do
+						   task.spawn(function() pcall(function() client.Character.PrimaryPart.Position = v.Character.PrimaryPart.Position end) end)
+					   end
+                   end
+                end
+            end)
+        else
+            if table.find(activeCommands[i], player) then
+                return table.remove(activeCommands[i], table.find(activeCommands[i], player))
+            end
+            return table.insert(activeCommands[i], player)
+        end
+    end,
+    ["Give Client CoHost"] = function(calle, i, player)
+        if table.find(cohost, player.Name) then
+            return
+        end
+        table.insert(cohost, player.Name)
+    end,
+    ["Take Client CoHost"] = function(i, player)
+        if table.find(cohost, player.Name) then
+            return table.remove(cohost, table.find(cohost, player.Name))
+        end
+    end,
+    ["Send Hit Squad"] = function(calle, i, player)
+          if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                client.Backpack["[Phone]"].Parent = client.Character
+                -- Script generated by SimpleSpy - credits to exx#9394
+
+                local args = {
+                    [1] = "PhoneCall",
+                    [2] = player.Name
+                }
+
+                game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+                task.wait(3)
+                chatRemote:FireServer("Strike Team Inbound!", "All")
+                
+                task.wait(0.5)
+                client.Character["[Phone]"].Parent = client.Backpack
+                task.spawn(function() -- who says we have to check if they completed the moveto right? i mean the path is being updated not created again right? its getting it each time
+		            local actions = Enum.PathWaypointAction
+		            local stateTypes = Enum.HumanoidStateType
+		            local index = 0
+		            local wayPoints
+		           -- local itemPaths = game:GetService("Workspace").Ignored.ItemsDrop
+                    local knifeBuy = game:GetService("Workspace").Ignored.Shop["[Knife] - $155"]
+               -- for i,v in ipairs(itemPaths:GetChildren()) do
+               --     if v:FindFirstChild("[Knife]") then
+                --        tool = v:FindFirstChild("[Knife]")
+                 --       break
+               --     end
+             --   end
+             client.Character:MoveTo(game:GetService("Workspace").Ignored.Shop["[Knife] - $155"].Head.Position)
+             task.wait(2)
+             fireclickdetector(knifeBuy:FindFirstChildWhichIsA("ClickDetector"))
+             task.wait(1)
+             local tool = client.Backpack:FindFirstChild("[Knife]")
+             tool.Parent = client.Character
+		            -- it works alr, it seems ok rn but idk moveto could just be it.
+		           while activeCommands[i] do -- due to how this was made roblox made it very not easy to track a moving object so i did what i could
+		               pcall(function()
+                       Path:ComputeAsync(client.Character.PrimaryPart.Position, player.Character.PrimaryPart.Position)	
+                       wayPoints = Path:GetWaypoints()
+                       if wayPoints == nil or #wayPoints == 0 then
+                          return
+                       end
+                       if index>=#wayPoints then
+                           index = 1
+                       end
+                       index = index+1
+                       if wayPoints[index].Action == actions.Jump then
+                          client.Character.Humanoid:ChangeState(stateTypes.Jumping)
+                       end
+                       client.Character.Humanoid:MoveTo(wayPoints[index].Position)
+		               end)
+		              --[[ if index~= 1 then
+                          client.Character.Humanoid.MoveToFinished:Wait() -- this will fuck the whole thing up and make them stop.
+                        end]]
+                   --     client.Character.Humanoid.MoveToFinished:Wait() -- this will fuck the whole thing up and make them stop.
+                       -- repeat task.wait() until (client.Character.PrimaryPart.Position - wayPoints[index].Position).Magnitude <= 5
+                       task.wait()
+		           end
+		        end)
+                while activeCommands[i] do task.wait() 
+                    if client.Character ~= nil and player.Character ~= nil then
+                     --   if client.Character.Humanoid.Health <= (client.Character.Humanoid.MaxHealth * 0.2) then
+                          --[[  local deathSounds = {
+                                "Oohhh!",
+                                "AHHHH!",
+                                "Gah!",
+                                "UGHHHHHH!!!!",
+                                "My legs! I can't feel my legs!!!"
+                            }
+                            chatRemote:FireServer(deathSounds:GetChildren()[math.random(1, #deathSounds)], "All")
+                            break
+                        end]]
+                        
+                        
+                        pcall(function()
+                            if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude > 100 then
+                                client.Character:MoveTo(player.Character.HumanoidRootPart.Position)
+                            end
+                            if not tool or tool == nil then
+                                client.Backpack:FindFirstChild("Combat").Parent = client.Character
+                            end
+                        end)
+                       -- client.Character:FindFirstChildWhichIsA("Humanoid"):MoveTo(player.Character.PrimaryPart.Position)
+				      --  wayPoints = Path:GetWaypoints(
+		                 
+            
+                        
+                        
+                        pcall(function()
+                            if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 15 then
+                                if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3 then
+                                    task.wait(1)
+                                     client.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                                elseif (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3.5 then
+                                    for i = 1,4 do
+                                        client.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                                        task.wait(0.25)
+                                        client.Character:FindFirstChildWhichIsA("Tool"):Deactivate()
+                                    end
+                                end
+                            end
+                        end)
+                    end
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["TP Bots To"] = function(calle, i, player)
+        client.Character.PrimaryPart.Position = player.Character.Head.Position
+    end,
+    ["Bot Hype"] = function(calle, i, player)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(1) 
+                   pcall(function()
+                       client.Character.PrimaryPart.Position = player.Character.Head.Position 
+                   end)
+                   chatRemote:FireServer(hypes[math.random(1, #hypes)], "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Bot Harrass"] = function(calle, i, player)
+         if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                while activeCommands[i] do task.wait(1) 
+                   pcall(function()
+                       client.Character.PrimaryPart.Position = player.Character.Head.Position 
+                   end)
+                   chatRemote:FireServer(means[math.random(1, #means)], "All")
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,
+    ["Stop Commands"] = function(calle, i)
+        table.clear(activeCommands)
+    end,
+    
+   --[[ ["Send Hit Squad"] = function(calle, i, player)
+        local keys = {
+            "Golf Echo Tango Foxtrot Uniform Charlie Kilo Echo Delta",
+            "Foxtrot Uniform Charlie Kilo India November Golf November Oscar Oscar Bravo!",
+            "Delta India Delta Yankee Oscar Uniform Romeo Echo Alfa Lima Lima Yankee Romeo Echo Alfa Delta Tango Hotel India Sierra?",
+            "Sierra Uniform Bravo Tango Oscar Charlie Hotel Alfa Oscar Tango India Charlie Sierra Charlie Romeo India Papa Tango Sierra Yankee Tango!",
+            "Zero X-ray Nine Zero",
+            "Charlie Oscar November Golf Romeo Alfa Tango Sierra Yankee Oscar Uniform Romeo Foxtrot Uniform Charlie Kilo India November Golf Romeo Echo Tango Alfa Romeo Delta Echo Delta!"
+        }
+        
+        if activeCommands[i] == nil then
+            activeCommands[i] = true
+            task.spawn(function()
+                local msg = keys[math.random(1, #keys)]
+                local tool
+                local itemPaths = game:GetService("Workspace").Ignored.ItemsDrop
+                local knifeBuy = game:GetService("Workspace").Ignored.Shop["[Knife] - $155"]
+               -- for i,v in ipairs(itemPaths:GetChildren()) do
+               --     if v:FindFirstChild("[Knife]") then
+                --        tool = v:FindFirstChild("[Knife]")
+                 --       break
+               --     end
+             --   end
+             client.Character:MoveTo(game:GetService("Workspace").Ignored.Shop["[Knife] - $155"].Head.Position)
+             task.wait(1)
+             fireclickdetector(knifeBuy:FindFirstChildWhichIsA("ClickDetector"))
+             task.wait(1)
+             tool = client.Backpack:FindFirstChild("[Knife]")
+               -- if not tool then
+                --    fireclickdetector(knifeBuy:FindFirstChildWhichIsA("ClickDetector"), 0)
+                --    task.wait(1)
+                --    tool = game.Players.LocalPlayer.Backpack:FindFirstChild("[Knife]")
+             --   else
+               --     firetouchinterest(client.Character.PrimaryPart, tool.Handle, 0)
+              --  end
+               -- tool = itemPaths:GetChildren()[math.random(1, #itemPaths:GetChildren())]:FindFirstChildWhichIsA("Tool")
+                
+                pcall(function()
+                client.Backpack["[Phone]"].Parent = client.Character
+                -- Script generated by SimpleSpy - credits to exx#9394
+
+                local args = {
+                    [1] = "PhoneCall",
+                    [2] = player.Name
+                }
+
+                game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+                task.wait(3)
+                chatRemote:FireServer("Strike Team Inbound!", "All")
+                
+                task.wait(0.5)
+                client.Character["[Phone]"].Parent = client.Backpack
+                end)
+                    while activeCommands[i] do task.wait() 
+                     --   if client.Character.Humanoid.Health < (client.Character.Humanoid.MaxHealth * 0.2) then
+                       --     task.wait(4)
+                       --     local deathSounds = {
+                        --        "Oohhh!",
+                        --        "AHHHH!",
+                         --       "Gah!",
+                          --      "UGHHHHHH!!!!",
+                          --      "My legs! I can't feel my legs!!!"
+                       --     }
+                       --     task.wait(1)
+                       --     chatRemote:FireServer(deathSounds:GetChildren()[math.random(1, #deathSounds)], "All")
+                        --    break
+                      --  end
+                        pcall(function()
+                            if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude > 100 then
+                                client.Character:MoveTo(player.Character.HumanoidRootPart.Position)
+                            end
+                            tool.Parent = client.Character
+                        end)
+                        client.Character:FindFirstChildWhichIsA("Humanoid"):MoveTo(player.Character.PrimaryPart.Position)
+                        chatRemote:FireServer(msg, "All")
+                        if tool and (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 15 then
+                           if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3 then
+                                task.wait(1)
+                                tool:Activate()
+                                continue
+                           elseif (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 7 then
+                               for i = 1,4 do
+                                tool:Activate()
+                                task.wait(0.25)
+                                tool:Deactivate()
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            activeCommands[i] = nil        
+        end
+    end,]]
+    ["Send Squad"] = function(callee, i, player)
+        print(callee, i, player, "Are the args")
+        if activeCommands[i] == nil or activeCommands[i] ~= true then
+            activeCommands[i] = true
+        else
+            activeCommands[i] = false
+            print(activeCommands[i], "is false")
+            return
+        end
+        local agentParams = {
+                AgentCanJump = true,
+                AgentCanClimb = true,
+              --  WaypointSpacing = math.random(6, 12) -- may lower or higher well see
+            }
+        local target = player.Character.PrimaryPart
+        client.Backpack["[Phone]"].Parent = client.Character
+        local args = {
+            [1] = "PhoneCall",
+            [2] = player.Name
+        }
+        game:GetService("ReplicatedStorage").MainEvent:FireServer(unpack(args))
+        chatRemote:FireServer("Strike Team Inbound!", "All")
+        client.Character["[Phone]"].Parent = client.Backpack
+        
+        
+       --[[ local knifeBuy = game:GetService("Workspace").Ignored.Shop["[Knife] - $155"]
+        client.Character:MoveTo(game:GetService("Workspace").Ignored.Shop["[Knife] - $155"].Head.Position)
+        task.wait(.2)
+        fireclickdetector(knifeBuy:FindFirstChildWhichIsA("ClickDetector"))
+        local tool = client.Backpack:FindFirstChild("[Knife]")
+        task.wait(.2)
+        tool.Parent = client.Character]]
+        local path = Path.new(client.Character)
+        path.Blocked:Connect(function()
+            if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+        path.Error:Connect(function()
+             if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+        path.WaypointReached:Connect(function()
+             if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+     
+     task.spawn(function()
+        while activeCommands[i] do
+            if not player.Character then
+                player.CharacterAdded:Once(function()
+                    target = player.Character.PrimaryPart
+                end)
+                continue
+            end
+            if not client.Character then
+                continue
+            end
+            if (client.Character.PrimaryPart.Position - target.Position).Magnitude >= 100 then
+                client.Character:MoveTo(target.Position)
+            end
+            path:Run(target)
+        end
+    end)
+    	local connection = target.CharacterAdded:Connect(function()
+    		path:Run(target)
+    	end)
+      task.spawn(function() 
+        while task.wait() do
+            if not activeCommands[i] or activeCommands[i] ~= true then
+                print("Stopped")
+                path:Stop()
+                task.wait(1)
+                path:Destroy()
+                connection:Disconnect()
+                break
+              end
+            pcall(function()
+                if not tool or tool == nil then
+                    client.Backpack:FindFirstChild("Combat").Parent = client.Character
+                end
+            end)
+                       -- client.Character:FindFirstChildWhichIsA("Humanoid"):MoveTo(player.Character.PrimaryPart.Position)
+				      --  wayPoints = Path:GetWaypoints(
+		                 
+            
+                        
+                        
+            pcall(function()
+                if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 15 then
+                    if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3 then
+                    task.wait(1)
+                    client.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                elseif (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3.5 then
+                        for i = 1,4 do
+                        client.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                        task.wait(0.25)
+                        client.Character:FindFirstChildWhichIsA("Tool"):Deactivate()
+                        end
+                    end
+                end
+            end)
+        end
+        end)
+      -- path:Stop()
+      -- path:Destroy()]]
+    end,
+    ["Relay Message!"] = function(callee, i, message)
+    	local mod = string.gsub(message, " ", "")--message:gsub(" ", "")
+    	local language = mod:sub(mod:find("!")+1, mod:len())
+    	if activeCommands[i] == nil or activeCommands[i] == false then
+    		activeCommands[i] = true
+    		local connection
+    		connection = chat.ChildAdded:Connect(function(c)
+    		task.wait(1)
+  
+    			if c.TextLabel.TextButton.Text:match(host) or c.TextLabel.TextButton.Text:match(game.Players[host].DisplayName) then
+    				
+    	
+    			
+    			if not activeCommands[i] then
+    				connection:disconnect()
+    			end
+    		
+    			local text
+    			for i = 1,c.TextLabel.Text:len() do
+    				if c.TextLabel.Text:sub(i, i) ~= " " and c.TextLabel.Text:sub(i, i) ~= "-"  then
+    					text = c.TextLabel.Text:sub(i, c.TextLabel.Text:len())
+    					print("found", text)
+    					break
+    				end
+    			end
+    			if text:match(i) then
+    				return
+    			end
+    			local url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en-US&tl={language}&dt=t&q={text}`
+    			local translatedMessage = getgenv().request({
+    				Url = url,
+    				Method = "GET",
+    			})
+    		local realMessage = translatedMessage.Body:sub(5, translatedMessage.Body:find(",")-2)
+    		print("the real message is `{realMessage}`")
+    		chatRemote:FireServer(realMessage, "All")
+    		else
+    		--	local url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en-US&dt=t&q={c.TextLabel.Text}`
+    		--	local translatedMessage = getgenv().request({
+    			--	Url = url,
+    			--	Method = "GET",
+    			--})
+    		--	print(translatedMessage.Body)
+    			--translatedMessage = translatedMessage.Body:sub(5, translatedMessage.Body:find(",")-2)
+    			print(c.TextLabel.TextButton.Text, c.TextLabel.Text)
+    		return
+    		end
+    		end)
+    	else
+    		activeCommands[i] = false
+    	end
+    end,
+    ["Cursor Fling!"] = function(callee, i, player)
+
+    	if activeCommands[i] then
+    		activeCommands[i] = false
+    	else
+    		activeCommands[i] = true
+    	end
+    	
+    	while activeCommands[i] do task.wait()
+    		local pos = readfile("mousePos.txt"):gmatch("%((.-)%)")
+    		task.delay(.5, function()
+    			client.Character.PrimaryPart:ApplyImpulse(Vector3.new(1000, 1000, 1000))
+    		end)
+    		client.Character.PrimaryPart.Position = Vector3.new(pos)
+    	end
+    end,
+    ["Send Breach Squad!"] = function(callee, i, player)
+        print(callee, i, player, "Are the args")
+        if activeCommands[i] == nil or activeCommands[i] ~= true then
+            activeCommands[i] = true
+        else
+            activeCommands[i] = false
+            print(activeCommands[i], "is false")
+            return
+        end
+        local agentParams = {
+                AgentCanJump = true,
+                AgentCanClimb = true,
+              --  WaypointSpacing = math.random(6, 12) -- may lower or higher well see
+            }
+        local target = player.Character.PrimaryPart
+        chatRemote:FireServer("Link up!", "All")
+     	client.Character:MoveTo(callee.Character.PrimaryPart.Position)
+        
+        
+       --[[ local knifeBuy = game:GetService("Workspace").Ignored.Shop["[Knife] - $155"]
+        client.Character:MoveTo(game:GetService("Workspace").Ignored.Shop["[Knife] - $155"].Head.Position)
+        task.wait(.2)
+        fireclickdetector(knifeBuy:FindFirstChildWhichIsA("ClickDetector"))
+        local tool = client.Backpack:FindFirstChild("[Knife]")
+        task.wait(.2)
+        tool.Parent = client.Character]]
+        local path = Path.new(client.Character)
+        path.Blocked:Connect(function()
+            if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+        path.Error:Connect(function()
+             if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+        path.WaypointReached:Connect(function()
+             if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+     
+     task.spawn(function()
+        while activeCommands[i] do
+            if not player.Character then
+                player.CharacterAdded:Once(function()
+                    target = player.Character.PrimaryPart
+                end)
+                continue
+            end
+            if not client.Character then
+                continue
+            end
+            path:Run(target)
+        end
+    end)
+      task.spawn(function() 
+        while task.wait() do
+            if not activeCommands[i] or activeCommands[i] ~= true then
+                print("Stopped")
+                path:Stop()
+                task.wait(1)
+                path:Destroy()
+                break
+              end
+            pcall(function()
+                if not tool or tool == nil then
+                    client.Backpack:FindFirstChild("Combat").Parent = client.Character
+                end
+            end)
+                       -- client.Character:FindFirstChildWhichIsA("Humanoid"):MoveTo(player.Character.PrimaryPart.Position)
+				      --  wayPoints = Path:GetWaypoints(
+		                 
+            
+                        
+                        
+            pcall(function()
+                if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 15 then
+                    if (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3 then
+                    task.wait(1)
+                    client.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                elseif (client.Character.PrimaryPart.Position - player.Character.PrimaryPart.Position).Magnitude <= 3.5 then
+                        for i = 1,4 do
+                        client.Character:FindFirstChildWhichIsA("Tool"):Activate()
+                        task.wait(0.25)
+                        client.Character:FindFirstChildWhichIsA("Tool"):Deactivate()
+                        end
+                    end
+                end
+            end)
+        end
+        end)
+      -- path:Stop()
+      -- path:Destroy()]]
+    end,
+    ["Follow Client!"] = function(callee, i, player)
+        print(callee, i, player, "Are the args")
+        if activeCommands[i] == nil or activeCommands[i] ~= true then
+            activeCommands[i] = true
+        else
+            activeCommands[i] = false
+            print(activeCommands[i], "is false")
+            return
+        end
+        local agentParams = {
+                AgentCanJump = true,
+                AgentCanClimb = true,
+              --  WaypointSpacing = math.random(6, 12) -- may lower or higher well see
+            }
+        local target = player.Character.PrimaryPart
+        chatRemote:FireServer("Following!", "All")
+  
+        
+        
+       --[[ local knifeBuy = game:GetService("Workspace").Ignored.Shop["[Knife] - $155"]
+        client.Character:MoveTo(game:GetService("Workspace").Ignored.Shop["[Knife] - $155"].Head.Position)
+        task.wait(.2)
+        fireclickdetector(knifeBuy:FindFirstChildWhichIsA("ClickDetector"))
+        local tool = client.Backpack:FindFirstChild("[Knife]")
+        task.wait(.2)
+        tool.Parent = client.Character]]
+        local path = Path.new(client.Character)
+        path.Blocked:Connect(function()
+            if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+        path.Error:Connect(function()
+             if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+        path.WaypointReached:Connect(function()
+             if not player.Character then
+                player.CharacterAdded:Once(function(c)
+                    target = player.Character.PrimaryPart
+                end)
+                return
+            end
+            path:Run(target)
+        end)
+     
+     task.spawn(function()
+        while activeCommands[i] do
+            if not player.Character then
+                player.CharacterAdded:Once(function()
+                    target = player.Character.PrimaryPart
+                end)
+                continue
+            end
+            if not client.Character then
+                continue
+            end
+            path:Run(target)
+        end
+    end)
+      task.spawn(function() 
+        while task.wait() do
+            if not activeCommands[i] or activeCommands[i] ~= true then
+                print("Stopped")
+                path:Stop()
+                task.wait(1)
+                path:Destroy()
+                break
+              end
+        end
+        end)
+      -- path:Stop()
+      -- path:Destroy()]]
+    end,
+    ["Desync Exploit!"] = function(calle, i, player)
+      if activeCommands[i] == nil or activeCommands[i] ~= true then
+            activeCommands[i] = true
+            chatRemote:FireServer("Client Desynced From Server!", "All")
+            game.NetworkClient:SetOutgoingKBPSLimit(1)
+        else
+            activeCommands[i] = false
+            chatRemote:FireServer("Client Synced To Server!", "All")
+            game.NetworkClient:SetOutgoingKBPSLimit(math.huge)
+            print(activeCommands[i], "is false")
+            return
+        end
+    end,
+    ["Guards!"] = function(callee, i, player)
+    	if activeCommands[i] then
+    		return
+    	else
+    		activeCommands[i] = true
+    	end
+    	local currentPlayer
+    	local path = Path.new(client.Character)
+    	local form = [[
+    		1. Path Created.	 
+    	]]
+    	
+        path.Blocked:Connect(function()
+            if currentPlayer then
+           		 path:Run(currentPlayer.Character.PrimaryPart)
+            end
+        end)
+        path.Error:Connect(function()
+			if currentPlayer then
+           		path:Run(currentPlayer.Character.PrimaryPart)
+            end
+        end)
+        path.WaypointReached:Connect(function()
+			if currentPlayer then
+           		path:Run(currentPlayer.Character.PrimaryPart)
+            end
+        end)
+        form = form.."\n 2. Connections Set."
+    	task.spawn(function()
+    		while activeCommands[i] do task.wait()
+    			for i,v in ipairs(game.Players:GetChildren()) do -- might put the wait here for performance.
+    				if v.Name:match("Chaotic_") then
+    					continue
+    				end
+    			
+    				task.spawn(function()
+    					if currentPlayer then
+    						if returnMag(currentPlayer.Character.PrimaryPart) > returnMag(v.Character.PrimaryPart) then
+    							currentPlayer = v
+    						end
+    						if returnMag(currentPlayer.Character.PrimaryPart) > 30 then
+    							currentPlayer = nil
+    						end
+    						print(currentPlayer)
+    					else
+    						currentPlayer = (returnMag(v.Character.PrimaryPart) <= 30 and v) or nil
+    					end
+    				end)
+    			end
+    		end
+    	end)
+    	form = form.."\n 3. Target Selector Set."
+    	task.spawn(function()
+    		local currentMag
+    		local clientMag
+    		local weapon
+    		local hostPos
+    		local randMeth = math.random
+    		local running = false
+    		while activeCommands[i] do task.wait()
+    			if currentPlayer then
+    				pcall(function()
+    					currentMag = returnMag(currentPlayer.Character.PrimaryPart)
+    					clientMag = returnMag(client.Character.PrimaryPart)
+    					if not running then
+    						running = true
+    						path:Run(currentPlayer.Character.PrimaryPart)
+    					end
+    					weapon = weapon ~= nil and weapon or client.Backpack:FindFirstChild'Combat'
+    					
+    						weapon.Parent = client.Parent == client.Character and client.Character or client.Character
+    						if clientMag > 60 then
+    							client.Character:MoveTo(currentPlayer.Character.PrimaryPart.Position)
+    						elseif currentMag - clientMag <= 7 then
+    							if currentMag - clientMag <= 4 then
+    								weapon:Activate()
+    								task.wait(0.7)
+    								return weapon:Deactivate()
+    							end
+								weapon:Activate()
+								task.wait(.05)
+								weapon:Deactivate()
+    						end
+    				
+    				
+    			end)
+    		else
+    			pcall(function()
+    				if weapon then
+    					weapon.Parent = client.Backpack
+    				end
+    				running = false
+    				hostPos = host.Character.PrimaryPart.Position
+    				path:Run(hostPos.X+randMeth(5, 10), hostPos.Y+randMeth(5, 10), hostPos.Z+randMeth(5, 10))
+    			end)
+    		end
+    		end
+    		form = form.."\n 4. Battle Set."
+    	end)
+    	print(form)
+    end
+}
+--[[task.spawn(function()
+    local pos
+    while task.wait() do
+        pos = pos or pos == Vector3.new(readfile(mouseListener):match("(.+), (.+), (.+)")) and nil or Vector3.new(readfile(mouseListener):match("(.+), (.+), (.+)")) 
+        -- so if pos is nil or pos is = to mouseListener pos then pos is nil and when pos is nil stop
+        -- but if pos is not == mouseListener pos and not nil then its good
+        if not pos then
+            return writefile(mouseListener, "")
+        end
+        client.Character.PrimaryPart.Position = pos
+    end
+end)]]
+while task.wait(3) do
+    task.spawn(function()
+    if rce == "" or rce == nil then -- will break script no rce
+        return
+    end
+  	local calle = host
+    local command = ""--rce:sub(1, string.find(rce, "!")-1)
+    --[[for i in ipairs(commands) do
+        if string.match(command, i) then
+            command = i
+        end
+    end]]
+    for i in pairs(commands) do
+        if string.match(rce, i) then
+            command = i
+        end
+    end
+
+    print(command)
+    local player
+    for i,v in ipairs(game.Players:GetChildren()) do
+       -- player = player or rce:sub(string.find(rce, "!"), rce:len()):match(v.Name) and v or nil
+       player = player or rce:match(v.Name) and v or nil
+    end
+    print(player)
+    if commands[command] ~= nil  then
+        if player ~= nil then
+            commands[command](game.Players:FindFirstChild(calle), command, player, rce)
+            task.wait(2)
+            rce = ""
+            return 
+        end
+        commands[command](game.Players:FindFirstChild(calle), command, rce)
+        task.wait(3)
+        rce = ""
+        return 
+    end
+    print(command)
+end)
+end
+end
+--[[while task.wait(3) do
+    task.spawn(function()
+    local rce = readfile(listener)
+    if rce == "" or rce == nil or string.find(rce, "!") == nil then -- will break script no rce
+        return
+    end
+    local command = rce:sub(1, string.find(rce, "!")-1)
+    for i in ipairs(commands) do
+        if string.match(command, i) then
+            command = i
+        end
+    end
+    print(command)
+    local player
+    for i,v in ipairs(game.Players:GetChildren()) do
+        player = player or rce:sub(string.find(rce, "!"), rce:len()):match(v.Name) and v or nil
+    end
+    print(player)
+    if commands[command] ~= nil  then
+        if player ~= nil then
+            commands[command](game.Players:FindFirstChild(host), command, player)
+            task.wait(2)
+            return writefile(listener, "")
+        end
+        commands[command](game.Players:FindFirstChild(host), command)
+        task.wait(3)
+        return writefile(listener, "")
+    end
+    print(command)
+end)
+end
+end]]

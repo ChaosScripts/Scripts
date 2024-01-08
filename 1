@@ -2,6 +2,12 @@
 
 local host
 local allowed = game:HttpGet("https://raw.githubusercontent.com/ChaosScripts/Scripts/main/Allowed")
+for i,v in ipairs(game.Players:GetPlayers()) do
+	if allowed:match(v.Name) then
+		host = v.Name
+  		break
+  	end
+end
 function playerAdded(plr)
   if allowed:match(plr.Name) then
           host = plr.Name

@@ -1,0 +1,2137 @@
+--[[
+	Roblox2Lua
+	----------
+	
+	This code was generated using
+	Deluct's Roblox2Lua plugin.
+]]--
+
+--// Instances -- stack visualizer with stack modifer?
+
+
+
+repeat task.wait() until game:IsLoaded()
+if true then
+
+
+
+local offhost = Instance.new("ScreenGui")
+offhost.IgnoreGuiInset = false
+offhost.ResetOnSpawn = false
+offhost.ZIndexBehavior = Enum.ZIndexBehavior.Global
+offhost.Name = "Offhost"
+offhost.Parent = game.CoreGui
+--syn.protect_gui(offhost)
+
+local main = Instance.new("ImageLabel")
+main.Image = "rbxassetid://2851926732"
+main.ImageColor3 = Color3.new(0.0431373, 0.0666667, 0.0823529)
+main.ScaleType = Enum.ScaleType.Slice
+main.SliceCenter = Rect.new(12, 12, 12, 12)
+main.BackgroundColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+main.BackgroundTransparency = 1
+main.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+main.Position = UDim2.new(0.0893635079, 0, 0.297532499, 0)
+main.Size = UDim2.new(0.159641251, 0, 0.226618201, 0)
+main.Visible = true
+main.Name = "main"
+main.Parent = offhost
+
+local text_label = Instance.new("TextLabel")
+text_label.Font = Enum.Font.PermanentMarker -- some kind of error in robloxs code prevents the font from coming out directly, my theory is in this font theres a space in the gui for its name but its not here, i think they made a naming mistake
+text_label.Text = " Chaotic Scripts YT | OffHost ~ Private"
+text_label.TextColor3 = Color3.new(1, 1, 1)
+text_label.TextSize = 14
+text_label.TextXAlignment = Enum.TextXAlignment.Left
+text_label.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+text_label.BorderSizePixel = 0
+text_label.Position = UDim2.new(0, 0, -0.00551588554, 0)
+text_label.Size = UDim2.new(1, 0, 0.0904659033, 0)
+text_label.Visible = true
+text_label.Parent = main
+
+local bar = Instance.new("TextLabel")
+bar.Font = Enum.Font.Unknown
+bar.Text = ""
+bar.TextColor3 = Color3.new(1, 1, 1)
+bar.TextSize = 14
+bar.TextXAlignment = Enum.TextXAlignment.Left
+bar.BackgroundColor3 = Color3.new(0, 0, 0)
+bar.BorderSizePixel = 0
+bar.Position = UDim2.new(0, 0, 0.204088941, 0)
+bar.Size = UDim2.new(1, 0, 0.00772759458, 0)
+bar.Visible = true
+bar.ZIndex = 4
+bar.Name = "bar"
+bar.Parent = main
+
+local mainlist = Instance.new("ScrollingFrame")
+mainlist.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+mainlist.ScrollBarImageTransparency = 1
+mainlist.ScrollBarThickness = 7
+mainlist.Active = true
+mainlist.BackgroundColor3 = Color3.new(1, 1, 1)
+mainlist.BackgroundTransparency = 1
+mainlist.Position = UDim2.new(0.0262250695, 0, 0.23166725, 0)
+mainlist.Size = UDim2.new(0.950441539, 0, 0.728810966, 0)
+mainlist.Visible = false
+mainlist.Name = "mainList"
+mainlist.Parent = main
+
+local uilist_layout = Instance.new("UIListLayout")
+uilist_layout.Padding = UDim.new(0.009999999776482582, 0)
+uilist_layout.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout.Parent = mainlist
+
+local client = Instance.new("TextButton")
+client.Font = Enum.Font.Ubuntu
+client.Text = "Client"
+client.TextColor3 = Color3.new(1, 1, 1)
+client.TextSize = 17
+client.TextStrokeTransparency = 0
+client.TextWrapped = true
+client.TextYAlignment = Enum.TextYAlignment.Bottom
+client.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+client.Position = UDim2.new(0.0237019863, 0, 0.12908566, 0)
+client.Size = UDim2.new(0.269757986, 0, 0.0788471326, 0)
+client.Visible = true
+client.ZIndex = 3
+client.Name = "Client"
+client.Parent = main
+
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(1000, 2000)
+uicorner.Parent = client
+
+local other_clients = Instance.new("TextButton")
+other_clients.Font = Enum.Font.Ubuntu
+other_clients.Text = "Other Clients"
+other_clients.TextColor3 = Color3.new(1, 1, 1)
+other_clients.TextSize = 17
+other_clients.TextStrokeTransparency = 0
+other_clients.TextWrapped = true
+other_clients.TextYAlignment = Enum.TextYAlignment.Bottom
+other_clients.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+other_clients.Position = UDim2.new(0.319670618, 0, 0.12908566, 0)
+other_clients.Size = UDim2.new(0.415869087, 0, 0.0788471326, 0)
+other_clients.Visible = true
+other_clients.ZIndex = 3
+other_clients.Name = "Other Clients"
+other_clients.Parent = main
+
+local uicorner_2 = Instance.new("UICorner")
+uicorner_2.CornerRadius = UDim.new(1000, 2000)
+uicorner_2.Parent = other_clients
+
+local games = Instance.new("TextButton")
+games.Font = Enum.Font.Ubuntu
+games.Text = "Games"
+games.TextColor3 = Color3.new(1, 1, 1)
+games.TextSize = 17
+games.TextStrokeTransparency = 0
+games.TextWrapped = true
+games.TextYAlignment = Enum.TextYAlignment.Bottom
+games.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+games.Position = UDim2.new(0.7542575, 0, 0.12908566, 0)
+games.Size = UDim2.new(0.221054286, 0, 0.0788471326, 0)
+games.Visible = true
+games.ZIndex = 3
+games.Name = "Games"
+games.Parent = main
+
+local uicorner_3 = Instance.new("UICorner")
+uicorner_3.CornerRadius = UDim.new(1000, 2000)
+uicorner_3.Parent = games
+
+local listtemplates = Instance.new("Folder")
+listtemplates.Name = "listTemplates"
+listtemplates.Parent = main
+
+local note = Instance.new("TextLabel")
+note.Font = Enum.Font.ArialBold
+note.Text = "Command: On"
+note.TextColor3 = Color3.new(1, 1, 1)
+note.TextSize = 14
+note.TextStrokeTransparency = 0
+note.BackgroundColor3 = Color3.new(1, 1, 1)
+note.BackgroundTransparency = 1
+note.Position = UDim2.new(-0.0337734483, 0, 0.921870351, 0)
+note.Size = UDim2.new(1.00261188, 0, 0.035954304, 0)
+note.Visible = false
+note.ZIndex = 99
+note.Name = "note"
+note.Parent = listtemplates
+
+local option = Instance.new("TextButton")
+option.Font = Enum.Font.Unknown
+option.Text = "Client"
+option.TextColor3 = Color3.new(1, 1, 1)
+option.TextScaled = true
+option.TextSize = 17
+option.TextStrokeTransparency = 0
+option.TextWrapped = true
+option.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+option.Position = UDim2.new(0, 0, -2.02825234e-07, 0)
+option.Size = UDim2.new(0.44848904*2.2, 0, 0.0432362556*2.2, 0) -- should cover entire frame may need to modify
+option.Visible = false
+option.ZIndex = 3
+option.Name = "Option"
+option.Parent = listtemplates
+
+local uicorner_4 = Instance.new("UICorner")
+uicorner_4.CornerRadius = UDim.new(0.30000001192092896, 0)
+uicorner_4.Parent = option
+
+local numberoption = Instance.new("TextButton")
+numberoption.Font = Enum.Font.Ubuntu
+numberoption.Text = "1"
+numberoption.TextColor3 = Color3.new(1, 1, 1)
+numberoption.TextSize = 17
+numberoption.TextStrokeTransparency = 0
+numberoption.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+numberoption.BackgroundTransparency = 1
+numberoption.Position = UDim2.new(0, 0, -2.43372114e-07, 0)
+numberoption.Size = UDim2.new(0.41042161, 0, 0.0375484079, 0)
+numberoption.Visible = false
+numberoption.ZIndex = 3
+numberoption.Name = "numberOption"
+numberoption.Parent = listtemplates
+
+local uicorner_5 = Instance.new("UICorner")
+uicorner_5.CornerRadius = UDim.new(0.30000001192092896, 0)
+uicorner_5.Parent = numberoption
+
+local player = Instance.new("TextButton")
+player.Font = Enum.Font.Ubuntu
+player.Text = "testdhrth"
+player.TextColor3 = Color3.new(1, 1, 1)
+player.TextSize = 17
+player.TextStrokeTransparency = 0
+player.TextXAlignment = Enum.TextXAlignment.Left
+player.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+player.BackgroundTransparency = 1
+player.Position = UDim2.new(-6.36599822e-08, 0, -2.43372114e-07, 0)
+player.Size = UDim2.new(0.98198843, 0, 0.0606782734, 0)
+player.Visible = false
+player.ZIndex = 3
+player.Name = "Player"
+player.Parent = listtemplates
+
+local uicorner_6 = Instance.new("UICorner")
+uicorner_6.CornerRadius = UDim.new(0.30000001192092896, 0)
+uicorner_6.Parent = player
+
+local option_v2 = Instance.new("TextButton")
+option_v2.Font = Enum.Font.Ubuntu
+option_v2.Text = "Kick player"
+option_v2.TextColor3 = Color3.new(1, 1, 1)
+option_v2.TextSize = 13
+option_v2.TextStrokeTransparency = 0
+option_v2.BackgroundColor3 = Color3.new(0.32549, 0.65098, 0.976471)
+option_v2.BackgroundTransparency = 1
+option_v2.Position = UDim2.new(-0.00902778003, 0, -0.0188730974, 0)
+option_v2.Size = UDim2.new(0.99999994, 0, 0.0672119632, 0)
+option_v2.Visible = false
+option_v2.ZIndex = 999
+option_v2.Name = "OptionV2"
+option_v2.Parent = listtemplates
+
+local uicorner_7 = Instance.new("UICorner")
+uicorner_7.CornerRadius = UDim.new(0.30000001192092896, 0)
+uicorner_7.Parent = option_v2
+
+local notes = Instance.new("ScrollingFrame")
+notes.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+notes.ScrollBarImageTransparency = 1
+notes.BackgroundColor3 = Color3.new(1, 1, 1)
+notes.BackgroundTransparency = 1
+notes.Position = UDim2.new(-0.561965764, 0, -1.30644751, 0)
+notes.Size = UDim2.new(0.437179476, 0, 4.39161301, 0)
+notes.Visible = false
+notes.ZIndex = 99
+notes.Name = "notes"
+notes.Parent = main
+
+local uilist_layout_2 = Instance.new("UIListLayout")
+uilist_layout_2.Padding = UDim.new(0, 2)
+uilist_layout_2.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout_2.VerticalAlignment = Enum.VerticalAlignment.Bottom
+uilist_layout_2.Parent = notes
+
+local games_2 = Instance.new("ScrollingFrame")
+games_2.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+games_2.ScrollBarImageTransparency = 1
+games_2.ScrollBarThickness = 7
+games_2.Active = true
+games_2.BackgroundColor3 = Color3.new(1, 1, 1)
+games_2.BackgroundTransparency = 1
+games_2.Position = UDim2.new(0.0262250695, 0, 0.23166725, 0)
+games_2.Size = UDim2.new(0.950441539, 0, 0.728810966, 0)
+games_2.Visible = true
+games_2.Name = "games"
+games_2.Parent = main
+
+local uilist_layout_3 = Instance.new("UIListLayout")
+uilist_layout_3.Padding = UDim.new(0.009999999776482582, 0)
+uilist_layout_3.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout_3.Parent = games_2
+
+local selectedplayer = Instance.new("ObjectValue")
+selectedplayer.Name = "selectedPlayer"
+selectedplayer.Parent = main
+
+local main_2 = Instance.new("LocalScript")
+main_2.Name = "main"
+main_2.Parent = main
+
+local clients_list = Instance.new("ImageLabel")
+clients_list.Image = "rbxassetid://2851926732"
+clients_list.ImageColor3 = Color3.new(0.0431373, 0.0666667, 0.0823529)
+clients_list.ScaleType = Enum.ScaleType.Slice
+clients_list.SliceCenter = Rect.new(12, 12, 12, 12)
+clients_list.BackgroundColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+clients_list.BackgroundTransparency = 1
+clients_list.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+clients_list.Position = UDim2.new(0.0893635005, 0, 0.345831066, 0)
+clients_list.Size = UDim2.new(0.159641251, 0, 0.178319588, 0)
+clients_list.Visible = false
+clients_list.Name = "Clients List"
+clients_list.Parent = offhost
+
+local clients = Instance.new("ScrollingFrame")
+clients.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+clients.ScrollBarImageTransparency = 1
+clients.ScrollBarThickness = 7
+clients.Active = true
+clients.BackgroundColor3 = Color3.new(1, 1, 1)
+clients.BackgroundTransparency = 1
+clients.Position = UDim2.new(0.0936609656, 0, 0.188576892, 0)
+clients.Size = UDim2.new(0.879259229, 0, 0.772, 0)
+clients.Visible = true
+clients.Name = "Clients"
+clients.Parent = clients_list
+
+
+
+local uilist_layout_4 = Instance.new("UIListLayout")
+--uilist_layout_4.Padding = UDim.new(0, 0.1)
+uilist_layout_4.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout_4.Parent = clients
+
+local text_label_2 = Instance.new("TextLabel")
+text_label_2.Font = Enum.Font.Ubuntu
+text_label_2.Text = " Client List:"
+text_label_2.TextColor3 = Color3.new(1, 1, 1)
+text_label_2.TextSize = 14
+text_label_2.TextXAlignment = Enum.TextXAlignment.Left
+text_label_2.BackgroundColor3 = Color3.new(0.258824, 0.513726, 0.772549)
+text_label_2.BackgroundTransparency = 1
+text_label_2.BorderSizePixel = 0
+text_label_2.Position = UDim2.new(0.0224786308, 0, 0.0375744849, 0)
+text_label_2.Size = UDim2.new(0.460512847, 0, 0.0904659107, 0)
+text_label_2.Visible = true
+text_label_2.Parent = clients_list
+
+local bar_2 = Instance.new("TextLabel")
+bar_2.Font = Enum.Font.Unknown
+bar_2.Text = ""
+bar_2.TextColor3 = Color3.new(1, 1, 1)
+bar_2.TextSize = 14
+bar_2.TextXAlignment = Enum.TextXAlignment.Left
+bar_2.BackgroundColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+bar_2.BorderSizePixel = 0
+bar_2.Position = UDim2.new(0.00749287708, 0, 0.14868629, 0)
+bar_2.Size = UDim2.new(0.9925071, 0, 0.01388337, 0)
+bar_2.Visible = true
+bar_2.ZIndex = 4
+bar_2.Name = "bar"
+bar_2.Parent = clients_list
+
+local bar_3 = Instance.new("TextLabel")
+bar_3.Font = Enum.Font.Unknown
+bar_3.Text = ""
+bar_3.TextColor3 = Color3.new(1, 1, 1)
+bar_3.TextSize = 14
+bar_3.TextXAlignment = Enum.TextXAlignment.Left
+bar_3.BackgroundColor3 = Color3.new(0.223529, 0.223529, 0.223529)
+bar_3.BorderSizePixel = 0
+bar_3.Position = UDim2.new(0.0711823329, 0, 0.16100347, 0)
+bar_3.Size = UDim2.new(0.00768678449, 0, 0.845029175, 0)
+bar_3.Visible = true
+bar_3.ZIndex = 4
+bar_3.Name = "bar"
+bar_3.Parent = clients_list
+
+local numberlist = Instance.new("ScrollingFrame")
+numberlist.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+numberlist.ScrollBarImageTransparency = 1
+numberlist.ScrollBarThickness = 7
+numberlist.Active = true
+numberlist.BackgroundColor3 = Color3.new(1, 1, 1)
+numberlist.BackgroundTransparency = 1
+numberlist.Position = UDim2.new(0.00374643854, 0, 0.203878179, 0)
+numberlist.Size = UDim2.new(0.0775213689, 0, 0.762755871, 0)
+numberlist.Visible = true
+numberlist.Name = "numberList"
+numberlist.Parent = clients_list
+
+local uilist_layout_5 = Instance.new("UIListLayout")
+uilist_layout_5.Padding = UDim.new(0.03999999910593033, 0)
+uilist_layout_5.HorizontalAlignment = Enum.HorizontalAlignment.Center
+uilist_layout_5.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout_5.Parent = numberlist
+
+local playeroptions = Instance.new("ImageLabel")
+playeroptions.Image = "rbxassetid://2851926732"
+playeroptions.ImageColor3 = Color3.new(0.0431373, 0.0666667, 0.0823529)
+playeroptions.ScaleType = Enum.ScaleType.Slice
+playeroptions.SliceCenter = Rect.new(12, 12, 12, 12)
+playeroptions.BackgroundColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+playeroptions.BackgroundTransparency = 1
+playeroptions.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+playeroptions.Position = UDim2.new(0.64558357, 0, 0.552197695, 0)
+playeroptions.Size = UDim2.new(0.0771053657, 0, 0.203566581, 0)
+playeroptions.Visible = false
+playeroptions.ZIndex = 999
+playeroptions.Name = "playerOptions"
+playeroptions.Parent = offhost
+
+local list = Instance.new("ScrollingFrame")
+list.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+list.ScrollBarImageTransparency = 1
+list.ScrollBarThickness = 7
+list.Active = true
+list.BackgroundColor3 = Color3.new(1, 1, 1)
+list.BackgroundTransparency = 1
+list.Position = UDim2.new(0.00511781871, 0, 0.0322000161, 0)
+list.Size = UDim2.new(0.991072357, 0, 0.928278327, 0)
+list.Visible = true
+list.ZIndex = 999
+list.Name = "list"
+list.Parent = playeroptions
+
+
+local uilist_layout_6 = Instance.new("UIListLayout")
+uilist_layout_6.Padding = UDim.new(0.009999999776482582, 0)
+uilist_layout_6.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout_6.Parent = list
+
+local gameoptions = Instance.new("ImageLabel")
+gameoptions.Image = "rbxassetid://2851926732"
+gameoptions.ImageColor3 = Color3.new(0.0431373, 0.0666667, 0.0823529)
+gameoptions.ScaleType = Enum.ScaleType.Slice
+gameoptions.SliceCenter = Rect.new(12, 12, 12, 12)
+gameoptions.BackgroundColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+gameoptions.BackgroundTransparency = 1
+gameoptions.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+gameoptions.Position = UDim2.new(0.64558357, 0, 0.552197695, 0)
+gameoptions.Size = UDim2.new(0.0771053657, 0, 0.203566581, 0)
+gameoptions.Visible = false
+gameoptions.ZIndex = 99999
+gameoptions.Name = "gameOptions"
+gameoptions.Parent = offhost
+
+local list_2 = Instance.new("ScrollingFrame")
+list_2.ScrollBarImageColor3 = Color3.new(0, 0, 0)
+list_2.ScrollBarImageTransparency = 1
+list_2.ScrollBarThickness = 7
+list_2.Active = true
+list_2.BackgroundColor3 = Color3.new(1, 1, 1)
+list_2.BackgroundTransparency = 1
+list_2.Position = UDim2.new(0.0749284625, 0, 0.0322000161, 0)
+list_2.Size = UDim2.new(0.859207749, 0, 0.928278446, 0)
+list_2.Visible = true
+list_2.ZIndex = 9999
+list_2.Name = "list"
+list_2.Parent = gameoptions
+
+local uilist_layout_7 = Instance.new("UIListLayout")
+uilist_layout_7.Padding = UDim.new(0.009999999776482582, 0)
+uilist_layout_7.SortOrder = Enum.SortOrder.LayoutOrder
+uilist_layout_7.Parent = list_2
+
+
+clients_list.AutomaticSize = Enum.AutomaticSize.Y -- figured out the fix in studio, parent frame needs AutomaticSize for y
+-- hopefully fixes scrolling issues
+--list.CanvasSize = UDim2.new(1, 0, 2, list.UIListLayout.AbsoluteContentSize.Y)
+--clients.AutomaticSize = Enum.AutomaticSize.Y
+clients.AutomaticCanvasSize = Enum.AutomaticSize.Y -- this works it just doesnt consider padding.
+-- will apply same fixes to client hub
+clients.UIListLayout.Padding = UDim.new(0, 15) -- the fix worked just doesnt account for padding but well try here
+numberlist.AutomaticCanvasSize = Enum.AutomaticSize.Y
+numberlist.UIListLayout.Padding = UDim.new(0, 14)
+list.AutomaticCanvasSize = Enum.AutomaticSize.Y -- gonna need to apply same thing eventually
+--main.AutomaticSize = Enum.AutomaticSize.Y
+--main.AutomaticSize = Enum.AutomaticSize.Y
+mainlist.UIListLayout.Padding = UDim.new(0, 1)
+mainlist.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+-- MAX SCROLL ISSUE FIXED FINALLY ALTHOUGHT IT LOOKS A LIL OFF SOMETIMES AND SOME VISUAL ERRORS ITS GOOD IT WORKS.
+
+
+--//Modules
+
+
+--[[COMMANDS
+speed,
+jump,
+fling,
+
+
+]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local modules = {}
+
+--// Scripts
+
+-- main
+task.spawn(function()
+	local script = main_2
+
+	local oldreq = require
+	local function require(target)
+		if modules[target] then
+			return modules[target]()
+		end
+		return oldreq(target)
+	end
+
+    local espOn = false
+	local main = script.Parent
+	local lists = {
+		main.notes,
+		main.mainList,
+		main.games,
+		main.Parent["Clients List"],
+	}
+	local drawingAPI = game:HttpGet("https://raw.githubusercontent.com/fatesc/Roblox-Drawing-Lib/main/main.lua") -- robloxs built in graphics library
+	local UIP = game:GetService("UserInputService")
+	local function drawObj(...) -- uses vector2 over 3 (x, y) not (x,y,z)
+		return loadstring(drawingAPI)(...) -- order, run conditional check on if a GUI exist, no then create one, if Type == "Line" or whatever setup corrosponding attributes, initialize attributes and such, return obj.
+	end
+	local function xNotify(header, text)
+	   return game:GetService("StarterGui"):SetCore("SendNotification",{
+		    title = header,
+		    text = text,
+		    duration = 4.5
+    	})
+	end
+    local gameIndexHook
+    local gameCallHook
+    gameIndexHook = hookmetamethod(game, "__index", function(self, method) 
+        if self == client and method:lower() == "kick" then
+            return error("Expected ':' not '.' calling member function Kick", 2)
+        end
+        if self == client and method:lower() == "teleport" then
+            return       
+        end
+        return gameIndexHook(self, method)
+    end)
+    gameCallHook = hookmetamethod(game, "__namecall", function(self, ...)
+        if self == client and getnamecallmethod():lower() == "kick" then
+            return
+        end
+        if self == client and getnamecallmethod():lower() == "teleport" then -- blocks tps
+            return
+        end
+        return gameCallHook(self, ...)
+    end)
+    
+	local games = main.Games
+	local otherClients = main["Other Clients"]
+	local clientOptions = main.Client
+	local client = game.Players.LocalPlayer
+	local function returnMag(enemy)
+		local part 
+		pcall(function()
+			part = enemy.PrimaryPart or enemy:FindFirstChildWhichIsA("BasePart")
+		end)
+		if part and client.Character then
+			return (client.Character.PrimaryPart.Position - part.Position).Magnitude
+		end
+	end
+	local selectedClient  = main.selectedPlayer
+	local players = client.Parent -- direct references are faster than variables
+	local temps = main.listTemplates
+	local button = temps.Option
+	local mouse = client:GetMouse()
+	local colorSchemes = {[true] = Color3.fromRGB(0, 255), [false] = Color3.fromRGB(255, 255, 255)}
+
+	local restorePoints = {}
+	local pastes = {}
+	local copied = {}
+	local activeCommands = {["ESP"] = {}}
+	local function send(msg)
+        game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(msg, "All")
+    end
+    local aimbotClients = {}
+    local paused = false
+    local guiServ = game:GetService("GuiService")
+    guiServ.MenuOpened:Connect(function()
+    	paused = true
+    end)
+    guiServ.MenuClosed:Connect(function()
+    	paused = false
+    end)
+    local clickSelect = false
+   --[[ local function drawLine(player)
+	    local espLine = Drawing.new("Line")
+	  --  espLine.From = Vector2.new(client.Character.PrimaryPart.Position.X, client.Character.PrimaryPart.Position.Y)
+	 --   espLine.To = Vector2.new(player.Character.PrimaryPart.Position.X, player.Character.PrimaryPart.Position.Y)
+	    espLine.Thickness = 1
+	    espLine.Visible = true
+	    espLine.Color = colorSchemes[false]
+	    ZIndex = 99
+	    espLine.Transparency = 1
+		return espLine
+	end]]
+--[[local function drawBox(player)
+	   local box = Drawing.new("Square")
+	   box.Size = Vector2.new(player.Character.PrimaryPart.Size.X, player.Character.PrimaryPart.Size.Y)
+box.Position = Vector2.new(player.Character.PrimaryPart.Position.X, player.Character.PrimaryPart.Position.Y)
+	   box.Filled = false
+	   box.Thickness = 1
+	   box.Visible = true
+	   box.Color = colorSchemes[true]
+	   box.Transparency = 1
+	   ZIndex = 99
+	   return box
+	end]]
+	 _G.On = false -- Use this if your making gui
+local function espPlayer(v)
+    local player = game.Players.LocalPlayer
+    local camera = workspace.Camera
+    local connection
+    local useMousePos = true
+    local useOtherInfo = true
+    local Box_Color = Color3.fromRGB(255, 0, 0)
+	local Box_Thickness = 2
+	local Box_Transparency = 1 -- 1 Visible, 0 Not Visible
+	
+	local Tracers = true
+	local Tracer_Color = Color3.fromRGB(255, 0, 0)
+	local Tracer_Thickness = 9
+	local Tracer_Transparency = 1 -- 1 Visible, 0 Not Visible
+	
+	local Shifter_Color = Color3.fromRGB(0, 255, 0)
+	
+	local Autothickness = true -- Makes screen less encumbered
+	
+	local Team_Check = true
+	local red = Color3.fromRGB(255)
+	
+	local green = Color3.fromRGB(0, 255)
+	
+    local function Lerp(a, b, t)
+		return a + (b - a) * t
+	end
+	local function NewLine()
+		local line = Drawing.new("Line")
+		line.Visible = false
+		line.From = Vector2.new(0, 0)
+		line.To = Vector2.new(1, 1)
+		line.Color = Box_Color
+		line.Thickness = Box_Thickness
+		line.Transparency = Box_Transparency
+		return line
+	end
+	local lines = {
+		line1 = NewLine(),
+		line2 = NewLine(),
+		line3 = NewLine(),
+		line4 = NewLine(),
+		line5 = NewLine(),
+		line6 = NewLine(),
+		line7 = NewLine(),
+		line8 = NewLine(),
+		line9 = NewLine(),
+		line10 = NewLine(),
+		line11 = NewLine(),
+		line12 = NewLine(),
+		Tracer = NewLine()
+	}
+	lines.Tracer.Color = Tracer_Color
+	lines.Tracer.Thickness = Tracer_Thickness
+	lines.Tracer.Transparency = Tracer_Transparency
+	
+	local Shifter = Drawing.new("Quad")
+	Shifter.Visible = false
+	Shifter.Color = Shifter_Color
+	Shifter.Thickness = Box_Thickness
+	Shifter.Filled = false
+	Shifter.Transparency = Box_Transparency
+	local debounce = 0
+	local shifteroffset = 0
+    local text = Drawing.new("Text")
+	
+	
+	text.Size = 12
+	text.Outline = true
+	--text.Font = Drawing.Font(")
+    local function ESP()
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if _G.On or v and table.find(activeCommands["ESP"], v.Name) ~= nil and v.Character ~= nil and v.Character:FindFirstChild("Humanoid") ~= nil and v.Character:FindFirstChild("HumanoidRootPart") ~= nil and v.Name ~= player.Name and v.Character.Humanoid.Health > 0 and v.Character:FindFirstChild("Head") ~= nil then
+                local pos, vis = camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
+					if vis then
+						text.Visible = true
+						local Scale = v.Character.Head.Size.Y/2
+						local Size = Vector3.new(2, 3, 1.5) * (Scale * 2) -- Change this for different box size
+	
+						local Top1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, -Size.Z)).p)
+						local Top2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, Size.Y, Size.Z)).p)
+						local Top3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, Size.Z)).p)
+						local Top4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, Size.Y, -Size.Z)).p)
+	
+						local Bottom1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, -Size.Z)).p)
+						local Bottom2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, -Size.Y, Size.Z)).p)
+						local Bottom3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, Size.Z)).p)
+						local Bottom4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, -Size.Y, -Size.Z)).p)
+	
+						--// Top:
+						lines.line1.From = Vector2.new(Top1.X, Top1.Y)
+						lines.line1.To = Vector2.new(Top2.X, Top2.Y)
+	
+						lines.line2.From = Vector2.new(Top2.X, Top2.Y)
+						lines.line2.To = Vector2.new(Top3.X, Top3.Y)
+	
+						lines.line3.From = Vector2.new(Top3.X, Top3.Y)
+						lines.line3.To = Vector2.new(Top4.X, Top4.Y)
+	
+						lines.line4.From = Vector2.new(Top4.X, Top4.Y)
+						lines.line4.To = Vector2.new(Top1.X, Top1.Y)
+	
+						--// Bottom:
+						lines.line5.From = Vector2.new(Bottom1.X, Bottom1.Y)
+						
+						lines.line5.To = Vector2.new(Bottom2.X, Bottom2.Y)
+	
+						lines.line6.From = Vector2.new(Bottom2.X, Bottom2.Y)
+						lines.line6.To = Vector2.new(Bottom3.X, Bottom3.Y)
+	
+						lines.line7.From = Vector2.new(Bottom3.X, Bottom3.Y)
+						lines.line7.To = Vector2.new(Bottom4.X, Bottom4.Y)
+	
+						lines.line8.From = Vector2.new(Bottom4.X, Bottom4.Y)
+						lines.line8.To = Vector2.new(Bottom1.X, Bottom1.Y)
+	
+						--//S ides:
+						lines.line9.From = Vector2.new(Bottom1.X, Bottom1.Y)
+						lines.line9.To = Vector2.new(Top1.X, Top1.Y)
+	
+						lines.line10.From = Vector2.new(Bottom2.X, Bottom2.Y)
+						lines.line10.To = Vector2.new(Top2.X, Top2.Y)
+	
+						lines.line11.From = Vector2.new(Bottom3.X, Bottom3.Y)
+						lines.line11.To = Vector2.new(Top3.X, Top3.Y)
+	
+						lines.line12.From = Vector2.new(Bottom4.X, Bottom4.Y)
+						lines.line12.To = Vector2.new(Top4.X, Top4.Y)
+	
+						--// Tracer:
+						if Tracers then
+							local trace = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(0, -Size.Y, 0)).p)
+	
+							lines.Tracer.From = (useMousePos and Vector2.new(mouse.x, mouse.y+37)) or Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+							lines.Tracer.To = Vector2.new(trace.X, trace.Y)
+						end
+	
+						--// Teamcheck:
+						
+						
+						text.Position = camera:WorldToViewportPoint(Vector3.new(v.Character.Head.Position.X, v.Character.Head.Position.Y+4, v.Character.Head.Position.Z))
+						local size = returnMag(v.Character)
+						size = (size<20 and size) or 20
+						size = (size<10 and 10) or size
+						text.Size = size
+						if Team_Check then
+							
+							if v.TeamColor == player.TeamColor then
+								for u, x in pairs(lines) do
+									x.Color = green
+								end
+								text.OutlineColor = green
+								text.Color = green
+								Shifter.Color = red
+							else 
+								for u, x in pairs(lines) do
+									x.Color = red
+								end
+								text.OutlineColor = red
+								text.Color = red
+								Shifter.Color = green
+							end
+						end
+	
+						--// Shifter:
+						if debounce == 0 then
+							debounce = debounce + 1
+							spawn(function()
+								for i = 0, Size.Y, 0.1 do
+									shifteroffset = Lerp(shifteroffset, i, 0.5)
+									wait()
+								end
+	
+								for i = shifteroffset, 0, -0.1 do
+									shifteroffset = Lerp(shifteroffset, i, 0.5)
+									wait()
+								end
+	
+								for i = 0, -Size.Y, -0.1 do
+									shifteroffset = Lerp(shifteroffset, i, 0.5)
+									wait()
+								end
+	
+								for i = shifteroffset, 0, 0.1 do
+									shifteroffset = Lerp(shifteroffset, i, 0.5)
+									wait()
+								end
+								debounce = 0
+							end)
+						end
+	
+						local shifter1 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, shifteroffset, -Size.Z)).p)
+						local shifter2 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(-Size.X, shifteroffset, Size.Z)).p)
+						local shifter3 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, shifteroffset, Size.Z)).p)
+						local shifter4 = camera:WorldToViewportPoint((v.Character.HumanoidRootPart.CFrame * CFrame.new(Size.X, shifteroffset, -Size.Z)).p)
+	
+						Shifter.PointA = Vector2.new(shifter1.X, shifter1.Y)
+						Shifter.PointB = Vector2.new(shifter2.X, shifter2.Y)
+						Shifter.PointC = Vector2.new(shifter3.X, shifter3.Y)
+						Shifter.PointD = Vector2.new(shifter4.X, shifter4.Y)
+	
+						--// Autothickness:
+						if Autothickness then
+							local distance = (player.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+							local value = math.clamp(1/distance*100, 0.1, 4) --0.1 is min thickness, 6 is max
+							for u, x in pairs(lines) do
+								x.Thickness = value
+							end
+							Shifter.Thickness = value
+						else 
+							for u, x in pairs(lines) do
+								x.Thickness = Box_Thickness
+							end
+							Shifter.Thickness = Box_Thickness
+						end
+	
+					for u, x in pairs(lines) do
+						if x ~= lines.Tracer then
+							x.Visible = true
+						end
+					end
+					if Tracers then
+						lines.Tracer.Visible = true
+					end
+					Shifter.Visible = true
+				else 
+					text.Visible = false
+					for u, x in pairs(lines) do
+						x.Visible = false
+					end
+					Shifter.Visible = false
+				end
+			else 
+				for u, x in pairs(lines) do
+					x.Visible = false
+				end
+				Shifter.Visible = false
+				text.Visible = false
+				if game.Players:FindFirstChild(v.Name) == nil or not _G.On or table.find(activeCommands["ESP"], v.Name) ~= nil  then
+					connection:Disconnect()
+				end
+			end
+        end)
+    end
+    ESP()
+    if useOtherInfo then
+    	task.spawn(function()
+    		while connection do task.wait()
+    			text.Text = string.format("%s[%x]", v.Name, returnMag(v.Character))
+    		end
+    	end)
+    else
+		text.Text = v.Name    	
+    end
+end
+	local clientCommands = {
+		["AntiFling"] = function(i)
+		    i = i.Name
+			if activeCommands[i] == nil then
+			    activeCommands[i] = false
+			end
+			activeCommands[i] = not activeCommands[i]
+			i.TextColor3 = colorSchemes[activeCommands[i]]
+			
+			task.spawn(function()
+			    while activeCommands[i] do task.wait()
+			        for i,v in ipairs(players:GetChildren()) do
+			            if v.Character and (v.Character.PrimaryPart.Position - xpcall(function() return client.Character.PrimaryPart.Position end)) and v.Character.PrimaryPart.Magntitude >= 100 then -- ?
+			                task.spawn(function()
+			                    for _,Part in ipairs(v.Character:GetChildren()) do
+			                        v.CanCollide = v:IsA("BasePart") and false
+			                    end
+			                end)
+			            end
+			        end
+			    end
+			end)
+		end,
+		["Fly"] = function(i)
+			if activeCommands[i.Name] == nil then
+				activeCommands[i.Name] = false
+			end
+			activeCommands[i.Name] = not activeCommands[i.Name]
+			i.TextColor3 = colorSchemes[activeCommands[i.Name]]
+			_G.fly()
+		end,
+		["Noclip"] = function(i)
+			if activeCommands[i.Name] == nil then
+				activeCommands[i.Name] = false
+			end
+			activeCommands[i.Name] = not activeCommands[i.Name] 
+			i.TextColor3 = colorSchemes[activeCommands[i.Name]]
+				
+			for o,v in ipairs(client.Character:GetChildren()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = activeCommands[i.Name]
+				end
+			end
+		end,
+		["antiAFK"] = function(i)
+			if activeCommands[i] == nil then
+				activeCommands[i] = false
+			end
+			activeCommands[i.Name] = not activeCommands[i.Name]
+			i.TextColor3 = colorSchemes[activeCommands[i.Name]]
+			task.spawn(function()
+				while activeCommands[i.Name] do task.wait(60*10)
+					client.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+				end
+			end)
+		end,
+		["Esp"] = function(i)
+		    _G.On = not _G.On
+		    i.TextColor3 = colorSchemes[_G.On]
+		    for i,v in ipairs(game.Players:GetChildren()) do
+		        if v == client then
+		            continue
+		        end
+		        espPlayer(v)
+		    end
+		  --[[  for i,v in ipairs(players:GetChildren()) do
+		        if v == client then
+		            continue
+		        end
+		        if table.find(activeCommands["ESP"], v.Name) ~= nil then
+		           table.remove(activeCommands["ESP"], table.find(activeCommands["ESP"], v.Name))
+		        end
+		        table.insert(activeCommands["ESP"], v.Name)
+		        espPlayer(v)
+		    end]]
+		end,
+		["Dex"] = function(i)
+		  return loadstring(game:HttpGet("https://raw.githubusercontent.com/ChaosScripts/Scripts/main/Dark%20Dex", true))()
+		end,
+		["Remote Spy"] = function()
+		   return loadstring(game:HttpGet("https://raw.githubusercontent.com/ChaosScripts/Scripts/main/SimpleSpy", true))()
+		end,
+		["Rejoin"] = function()
+		   return game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId)
+		end,
+		["Quick Options"] = function(i)
+		   if activeCommands[i.Name] == nil then
+		       activeCommands[i.Name] = false     
+		   end
+		   activeCommands[i.Name] = not activeCommands[i.Name]
+		   i.TextColor3 = colorSchemes[activeCommands[i.Name]]
+		end,
+		["Aimbot"] = function(i, player)
+			if activeCommands[i.Name] == nil then
+		       activeCommands[i.Name] = true
+		       i.TextColor3 = Color3.fromRGB(0, 255, 0)
+			else
+				activeCommands[i.Name] = nil
+				table.clear(aimbotClients)
+				i.TextColor3 = Color3.fromRGB(255, 255, 255)
+		    end
+		    
+		    if activeCommands[i.Name] then
+		    	for _,plr in ipairs(game.Players:GetPlayers()) do
+		    		if not plr:IsA("Player") then
+		    			continue
+		    		end
+		    		if plr == client then
+		    			continue
+		    		end
+		    		if not table.find(aimbotClients, plr) then
+		    			if plr.Team == nil and client.Team == nil or client.Team ~= plr.Team then
+		    				table.insert(aimbotClients, plr)
+		    			end
+		    		end
+		    	end
+		    end
+		end,
+		["Speed"] = function(i, player)
+		    if activeCommands[i.Name] == nil then
+		        activeCommands[i.Name] = 0    
+		    end
+		    if activeCommands[i.Name] then
+		        if activeCommands[i.Name] >= 8 then
+		            activeCommands[i.Name] = nil
+		            client.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = 16
+		            i.Text = "Speed" 
+		            i.TextColor3 = Color3.fromRGB(255, 255, 255)
+		        else
+		            activeCommands[i.Name] = activeCommands[i.Name] + 2       
+		        end
+		        client.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed = client.Character:FindFirstChildWhichIsA("Humanoid").WalkSpeed * activeCommands[i.Name]
+		        i.Text = string.format("Speed %sX", tostring(activeCommands[i.Name])) 
+		        i.TextColor3 = colorSchemes[true]
+		    end
+		end,
+		["Jump"] = function(i)
+		     if activeCommands[i.Name] == nil then
+		        activeCommands[i.Name] = 0    
+		    end
+		    if activeCommands[i.Name] then
+		        if activeCommands[i.Name] >= 8 then
+		            activeCommands[i.Name] = nil
+		            client.Character:FindFirstChildWhichIsA("Humanoid").JumpPower = 60
+		            i.Text = "Jump" 
+		            i.TextColor3 = Color3.fromRGB(255, 255, 255)
+		        else
+		            activeCommands[i.Name] = activeCommands[i.Name] + 2       
+		        end
+		        client.Character:FindFirstChildWhichIsA("Humanoid").JumpPower = client.Character:FindFirstChildWhichIsA("Humanoid").JumpPower * activeCommands[i.Name]
+		        i.Text = string.format("Jump %sX", tostring(activeCommands[i.Name])) 
+		        i.TextColor3 = colorSchemes[true]
+		    end
+		end,
+		["Assemble Bots"] = function(i)
+		   send(string.format("%s", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bot Chat From File"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bomb Chat"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		--[[["Chat Lagger"] = function(i)
+		    i = i.Name
+		   appendfile("listener.txt", string.format("%s!", i)) -- listener script will parse this and get command, players
+		end,]]
+		["Advertise"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Rick Roll!"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bot tp all"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Kill Bots"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Disconnect Bots"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players("listener.txt", string.format("%s!", i)) -- listener script will parse this and get command, players
+		end,
+		["SpinBot"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Announce From File"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Own Server"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["State Bot Users"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Clear CoHosts"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Say CoHost"] = function(i)
+		   i = i.Name
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Reconnect Clients"] = function(i)
+		   send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bot Quick Commands"] = function(i)
+		   
+		end,
+		["Your Host Is.."] = function(i)
+		
+		end,
+		["Fling Forcefield(Bots)"] = function(i)
+		  send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bots Repeat from file"] = function(i)
+		  send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+		["Player Sniper(Patched, Looking Into image finding apis.)"] = function() -- 
+		    local Place = game.PlaceId
+		    local serverUrl = "https://games.roblox.com/v1/games/"..Place.."/servers/Public?sortOrder=Asc&limit=100"
+		    local data = game:GetService("HttpService"):JSONDecode(game:HttpGet(serverUrl))
+		    local serverID
+		    -- data.data comtains every running server instance
+		    -- in each server instance table we have 
+		    
+		    for i,v in ipairs(data.data) do -- screw image apis may be able to tie the token to their user in some way and so some comparisons
+		        task.spawn(function()
+		            print(i)
+		            for _,server in pairs(v) do
+		                print(_, server)
+		                
+		            end
+		            for i,v in pairs(v["players"]) do
+		                
+		            end
+		        end)
+		    end
+		end, -- 1551BCDF3C4A114272CA34F20753B271 -- hash to image?
+		["Stop Commands"] = function(i)
+            send(string.format("%s!", i.Name)) -- listener script will parse this and get command, players
+		end,
+    ["Fuck Other Hackers ESP"] = function() -- throw client into void
+    
+    end,
+    ["Chat Logger"] = function()
+        return pcall(function()
+            loadstring(game:HttpGet("https://pastebin.com/raw/stggPUBM", true))()
+        end)
+    end,
+    ["Parent Prober(Disable other click stuff, will override!)"] = function(i)
+    	if activeCommands[i.Name] == nil then
+			activeCommands[i.Name] = false
+		end
+		activeCommands[i.Name] = not activeCommands[i.Name]
+		i.TextColor3 = colorSchemes[activeCommands[i.Name]]
+		local connection
+		connection = mouse.Button1Down:Connect(function()
+			if activeCommands[i.Name] then
+				local targ = mouse.Target and mouse.Target:IsA("BasePart") and mouse.Target.Parent:IsA("Model") and mouse.Target.Parent or mouse.Target.Parent.Parent:IsA("Model") and mouse.Target.Parent.Parent
+				setclipboard(targ.Parent.Name)
+				xNotify(string.format("%s!'s Parent", targ.Name), targ.Parent.Name)
+			else
+				connection:Disconnect() -- may disconnect all clicks	
+			end
+		end)
+    end,
+    ["Click Select"] = function(i)
+    	clickSelect = not clickSelect
+    	i.TextColor3 = colorSchemes[clickSelect]
+    	if activeCommands[i.Name] == nil then
+    		activeCommands[i.Name] = true
+    	else
+    		activeCommands[i.Name] = nil
+    	end
+    end,
+    ["Relay Message! Russian"] = function(i)
+    	send("Relay Message! ru")
+    end,
+    ["Relay Message! Chinese1"] = function(i)
+    	send("Relay Message! zh-HK")
+    end,
+    ["Relay Message! Chinese2"] = function(i)
+    	send("Relay Message! zh-TW")
+    end,
+    ["Relay Message! Chinese3"] = function(i)
+    	send("Relay Message! zh-CN")
+    end,
+    ["Relay Message! Albanian"] = function(i)
+    	send("Relay Message! sq")
+    end,
+    ["Relay Message! Arabic"] = function(i)
+    	send("Relay Message! ar")
+    end,
+    ["Relay Message! Dutch"] = function(i)
+    	send("Relay Message! nl")
+    end,
+    ["Relay Message! Czech"] = function(i)
+    	send("Relay Message! cs")
+    end,
+    ["Relay Message! German"] = function(i)
+    	send("Relay Message! de")
+    end,
+    ["Relay Message! Hebrew"] = function(i)
+    	send("Relay Message! iw")
+    end,
+    ["Relay Message! Hindu"] = function(i)
+    	send("Relay Message! hi")
+    end,
+    ["Relay Message! Greek"] = function(i)
+    	send("Relay Message! el")
+    end,
+    ["Relay Message! Italian"] = function(i)
+    	send("Relay Message! it")
+    end,
+    ["Relay Message! Indonesian"] = function(i)
+    	send("Relay Message! id")
+    end,
+    ["Relay Message! Spanish"] = function(i)
+    	send("Relay Message! es")
+    end,
+    ["Relay Message! Georgian"] = function(i)
+    	send("Relay Message! ka")
+    end,
+    ["Relay Message! French"] = function(i)
+    	send("Relay Message! fr")
+    end,
+    ["Relay Message! Japanese"] = function(i)
+    	send("Relay Message! ja")
+    end,
+    ["Relay Message! Korean"] = function(i)
+    	send("Relay Message! ko")
+    end,
+    ["Relay Message! Norwegian"] = function(i)
+    	send("Relay Message! no")
+    end,
+    ["Relay Message! Romanian"] = function(i)
+    	send("Relay Message! ro")
+    end,
+    ["Relay Message! Swedish"] = function(i)
+    	send("Relay Message! sv")
+    end,
+    ["Relay Message! Vietnamese"] = function(i)
+    	send("Relay Message! vi")
+    end,
+    ["Relay Message! Welsh"] = function(i)
+    	send("Relay Message! cy")
+    end,
+    ["Relay Message! Thai"] = function(i)
+    	send("Relay Message! th")
+    end,
+    ["Relay Message! Urdu"] = function(i)
+    	send("Relay Message! ur")
+    end,
+    ["Click Tp"] = function(i)
+		if activeCommands[i] == nil then
+			activeCommands[i] = false
+		end
+		activeCommands[i] = not activeCommands[i]
+		i.TextColor3 = colorSchemes[activeCommands[i]]
+		local connection
+		
+		connection = mouse.Button1Down:Connect(function()
+			if activeCommands[i] then
+				game.Players.LocalPlayer.Character:MoveTo(mouse.Hit.p)
+			else
+				connection:Disconnect()
+			end
+		end)
+    end,
+	}
+	local gamesHub = {
+        ["Kill Monsters to Save Some Bitch"] = {
+			Id = nil,
+            Commands = {
+                ["Infinite Damage Exploit"] = function()
+                    local tool = client.Character:FindFirstChildWhichIsA("Tool")
+                    local remote = game:GetService("ReplicatedStorage").Remote.Weapon.TakeDamage
+                    if tool then
+                        for i = 1,200 do task.wait() -- x200
+                            tool.Activated:Connect(function()
+                                remote:FireServer()
+                            end)
+                        end
+                    end
+                 end,  
+                ["Auto Kill All Enemies"] = function(i)
+                    if activeCommands[i.Name] then
+                        activeCommands[i.Name] = not activeCommands[i.Name]
+                            return
+                        else
+                            activeCommands[i.Name] = true        
+                        end
+                            
+                            local tool = client.Character:FindFirstChildWhichIsA("Tool")
+                            local remote = game:GetService("ReplicatedStorage").Remote.Weapon.TakeDamage
+                            
+                    if tool then
+                        
+                        task.spawn(function()
+                            while activeCommands[i.Name] and tool do task.wait()
+                                tool.Handle.Size = Vector3.new(1000, 1000, 1000)
+                                remote:FireServer()
+                            end
+                        end)
+                    end
+                end
+            }    
+        },
+        ["Balanced Craftwars"]  = {
+        	weaponsToUse = {},
+        	rapidFireOffset = 5, -- too much will overload event
+        	aimBotHit = nil, -- for aimbot
+        	Commands = {
+        		["Silent Shoot + Rapid Fire"] = function(i, commandTable)
+        			if activeCommands[i.Name] then
+                     	activeCommands[i.Name] = not activeCommands[i.Name]
+                       return
+                    else
+                      activeCommands[i.Name] = true
+                   	end
+        			task.spawn(function()
+        				local connection
+        				connection = mouse.Button1Down:Connect(function()
+        					
+        					_G.rapidFireOn = true
+        					if activeCommands[i.Name] then
+        						for _ = 1,commandTable.rapidFireOffset do
+        							while activeCommands[i.Name] and _G.rapidFireOn do task.wait() 
+        								for _,v in ipairs(commandTable.weaponsToUse) do
+        									task.spawn(function()
+        										if not v:FindFirstChild("RemoteFunction") then
+        											Instance.new("RemoteFunction", v)
+        										end -- somehow this shit gets deleted
+        										v.RemoteFunction:InvokeServer(
+        											v:FindFirstChild("GunMain") and "shoot" or "swing",
+        											{commandTable.aimBotHit and commandTable.aimBotHit.PrimaryPart.Position or mouse.Hit, v.Damage.Value}
+        										)
+        									end)
+        								end
+        							end
+        						end
+        					else
+        						connection:Disconnect()
+        					end
+        				end)
+        				mouse.Button1Up:Connect(function()
+        					_G.rapidFireOn = nil
+        				end)
+        			end)
+        		end,
+        		["ForceField"] = function(i, commandTable)
+        			print("Test1")
+        			if activeCommands[i.Name] then
+                     	activeCommands[i.Name] = not activeCommands[i.Name]
+                     	if activeCommands["Silent Shoot + Rapid Fire"] then
+                     		activeCommands["Silent Shoot + Rapid Fire"] = nil
+                     	end
+                       return
+                   	end
+                   	print("Test2")
+                   	activeCommands[i.Name] = true
+                    commandTable.Commands["Silent Shoot + Rapid Fire"](i, commandTable) -- could this be yielding
+                   	print("Test3")
+                   	task.spawn(function()
+                   		print("test4")
+                   		while activeCommands[i.Name] do task.wait()
+                   		print(commandTable.aimBotHit)
+                   			for _,v in ipairs(workspace:GetChildren()) do
+                   				if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and not game.Players:GetPlayerFromCharacter(v) then
+                   				
+                   					if commandTable.aimBotHit==nil then
+                   						commandTable.aimBotHit = returnMag(v)<=50 and v
+                   						continue
+                   					end
+                   					commandTable.aimBotHit = returnMag(v)<returnMag(commandTable.aimBotHit) and v or commandTable.aimBotHit
+                   				end
+                   			end
+                   		end
+                   	end)
+        		end,
+        		["Ore Farmer"] = function(i)
+        			-- Script generated by SimpleSpy - credits to exx#9394
+        			if not workspace:FindFirstChild("OreSet") then
+        				return print("Offhost:", "No Ores on map!")
+        			end
+					local folder = workspace.OreSet
+					local pickAxe = client.Backpack["Iron Pickaxe"]
+					if activeCommands[i.Name] then
+                     	activeCommands[i.Name] = not activeCommands[i.Name]
+                       return
+                    else
+                      activeCommands[i.Name] = true
+                   	end
+                   	task.spawn(function()
+                   		while activeCommands[i.Name] do task.wait()
+                   			for _,v in ipairs(folder:GetChildren()) do
+                   				task.spawn(function()
+                   					if not v.Properties.Owner.Value or v.Properties.Owner.Value == game.Players.LocalPlayer then
+                   						pickAxe.RemoteFunction:InvokeServer("hit", {unpack(v.Properties:GetChildren())})
+                   					end
+                   				end)
+                   			end
+                   		end
+                   	end)
+        		end
+        	}
+        }
+    }    
+	
+	local otherPlayerOptions = {
+		["Human Bullet(fling)"] = function(i, player)
+			if activeCommands[i.Name] == nil then
+				--table.insert(activeCommands[i.Name], player.Name)
+				activeCommands[i.Name] = {player.Name}
+				
+				task.spawn(function()
+					client.Character.PrimaryPart = client.Character.HumanoidRootPart -- 12/23/2023 -- added for games that use the head as a primarypart
+					while activeCommands[i.Name] ~= nil do task.wait()
+						for i,v in ipairs(activeCommands[i.Name]) do
+							task.delay(0.7, function()
+								pcall(function() client.Character.PrimaryPart:ApplyImpulse(Vector3.new(500, 500, 500)) end)
+							end)
+							for x = 1,50 do
+								task.spawn(function() pcall(function() client.Character.PrimaryPart.Position = game.Players[v].Character.PrimaryPart.Position end) end)
+							end
+						end
+					end 
+				end)
+				return
+			end
+			if table.find(activeCommands[i.Name], player.Name) then
+				return table.remove(activeCommands[i.Name], table.find(player.Name))
+			end
+			return table.insert(activeCommands[i.Name], player.Name)
+		end,
+		["Hat Fling"] = function(i, player)
+		   if activeCommands[i.Name] == nil then
+				--table.insert(activeCommands[i.Name], player.Name)
+				activeCommands[i.Name] = {player.Name}
+				
+				task.spawn(function()
+				    
+				   
+					while activeCommands[i.Name] ~= nil do task.wait()
+					    for o,x in ipairs(client.Character:GetChildren()) do
+					        if x.Name=="InternationalFedora" and x.Handle.CanCollide then
+					             x.Handle.SpecialMesh:Destroy()
+				                 x.Parent = workspace
+					            task.spawn(function()
+						            for s,v in ipairs(activeCommands[i.Name]) do
+						        	    task.delay(0.35, function()
+							            	pcall(function() x.Handle:ApplyImpulse(Vector3.new(5000, 5000, 5000)) end)
+						            	end)
+						            	for p = 1,50 do
+						    	         	task.spawn(function() pcall(function() x.Handle.Position = game.Players[v].Character.PrimaryPart.Position end) end)
+						        	    end
+						        	end
+						        end)
+				    	    end
+						end
+					end 
+				end)
+				return
+			end
+			if table.find(activeCommands[i.Name], player.Name) then
+				return table.remove(activeCommands[i.Name], player.Name)
+			end
+			return table.insert(activeCommands[i.Name], player.Name)
+		end,
+		["Copy Name"] = function(i, player)
+		    setclipboard(player.Name)
+		    xNotify("Copied!", player.Name)
+		end,
+		["Copy ID"] = function(i, player)
+		    setclipboard(player.UserId)
+		    xNotify("Copied!", player.UserId)
+		end,
+		["Remember That Faggot"] = function(i, player)
+		    appendfile("remembered.txt", string.format("%s[%s]", player.Name, player.UserId))
+		end,
+		["Bot Fling"] = function(i, player)
+		   send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		    
+		--[[    if activeCommands[i] == nil then
+		        activeCommands[i] = {player}
+		    end
+		    if table.find(activeCommands[i], player) then
+		        table.remove(activeCommands[i], player)
+		    end
+		    task.spawn(function()
+		        while table.find(activeCommands[i], player) do task.wait()
+		            
+		        end
+		    end)]]
+		end,
+		["Chat Bomb"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+		["Give Client CoHost"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+		["Take Client CoHost"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+	--[[	local line = drawObj("Line") 
+						local text = drawObj("Text")
+						local box = drawObj("Square")
+						local char = plr.Character
+					
+						line.To =  Vector2.new(char.PrimaryPart.Position.x, char.PrimaryPart.Position.y)
+						line.From = Vector2.new(plr.Character.PrimaryPart.Position.x, plr.Character.PrimaryPart.Position.y)
+						line.Thickness = 2
+						text.Text = tostring(v.Character:FindFirstChildWhichIsA("Humanoid").Health..":"..v.Character:FindFirstChildWhichIsA("Humanoid").MaxHealth)
+						text.Size = 2
+						text.Center = true
+						text.Outline = true
+						text.OutlineColor = Color3.new(0,0,255)
+						text.Position = v.Character.Head
+						box.Size  = Vector2.new(char.PrimaryPart.Size.x, char.PrimaryPart.Size.y)
+						box.Position = Vector2.new(char.PrimaryPart.Size.x, char.PrimaryPart.Size.y)
+						-- box.Filled = true // if you want
+						active = {line, text, box, unpack(active)}			
+			
+			]]
+		["ESP Client"] = function(i, player)
+		    local camera = workspace.Camera
+		    i = i.Name
+		    if table.find(activeCommands["ESP"], player.Name) then -- theory that this may yield the esp
+		        return table.remove(activeCommands["ESP"], table.find(activeCommands["ESP"], player.Name))
+		    end
+		    table.insert(activeCommands["ESP"], player.Name)
+		    return espPlayer(player)
+		        -- esp is much harder to make good than you would expect, the math is kinda annoying
+		  --[[ task.spawn(function()
+		        local espLine = drawLine(player)
+		        local espBox = drawBox(player)
+		        while table.find(activeCommands[i], player.Name) ~= nil do task.wait()
+		           if not espLine then
+		                espLine = drawLine(player)
+		            end
+		            if not espBox then
+		                espBox = drawBox(player)
+		            end
+		                local offset = Vector3.new(0, 0.5, 0) 
+		                local offset2 = Vector3.new(0, 3, 0)
+		                local headPos = Camera.WorldToScreenPoint(player.Character.Head.Position + offset)
+		                local leg
+		                local rootClient, depth = Camera.WorldToScreenPoint(client.Character.PrimaryPart.Position)
+		                local rootPlayer, depth, Visible = Camera.WorldToScreenPoint(player.Character.PrimaryPart.Position)
+		               
+		               if Visible then
+		                    espLine.From = Vector2.new(client.Character.HumanoidRootPart.Position.X, client.Character.HumanoidRootPart.Position.Y)
+	                        espLine.To = Vector2.new(player.Character.HumanoidRootPart.Position.X, player.Character.HumanoidRootPart.Position.Y) -- player.Character.PrimaryPart.Position.X, player.Character.PrimaryPart.Position.Y 
+	                        espBox.Size =  Vector2.new(player.Character.HumanoidRootPart.Size.X, player.Character.HumanoidRootPart.Size.Y)
+	                        espBox.Position = Vector2.new(player.Character.HumanoidRootPart.Position.X, player.Character.HumanoidRootPart.Position.Y)
+	                   end
+		                
+		        end
+		       espBox:Remove()
+		       espLine:Remove()
+		      print(espLine, "\n "..espBox)
+		        
+		    end)]]
+		end,
+		["Aimbot Client"] = function(i, player) -- will use screen
+		    if table.find(aimbotClients, player) then
+		    	table.remove(aimbotClients, table.find(player))
+		    else
+		    	table.insert(aimbotClients, player)
+		    end
+		   --[[ if activeCommands[i] == nil then
+		        activeCommands[i] = {player}
+		        
+		        task.spawn(function()
+                    local aimbotTarget
+                    local camera = workspace.Camera
+		            while activeCommands[i] do
+		                for i,v in ipairs(activeCommands[i]) do task.wait()
+		                    task.spawn(function()
+		                        local character = v.Character
+		                        aimbotTarget = i == 1 and v.Character or (aimbotTarget.PrimaryPart.Position - client.Character.PrimaryPart.Position).Magntitude < (aimbotTarget.PrimaryPart.Position - client.Character.PrimaryPart.Position).Magntitude or aimbotTarget
+		                    end)
+		                end
+                        
+                        local pos, vis = camera:WorldToViewportPoint(aimbotTarget.Head.Position)
+                        if vis and not paused then
+		                    mousemoverel(pos.x, pos.y)
+                        end
+		            end
+		        end)
+		    end
+		    if table.find(activeCommands[i], player.Name) then
+		        table.remove(activeCommands[i], player.Name)
+		    end]]
+		end,
+		["TP to Client"] = function(i, player)
+		    client.Character:MoveTo(player.Character.Head.Position)
+		  -- client.Character.PrimaryPart.Position = player.Character.Head.Position
+		end,
+		["Steal Tools"] = function(i, player)
+		    for i,v in ipairs(player.Character:GetChildren()) do
+		        v.Parent = v:IsA("Tool") and client.Character or v.Parent
+		    end
+		end,
+		["Watch Client"] = function(i, player)
+		    if workspace.Camera.CameraSubject ~= client.Character:FindFirstChildWhichIsA("Humanoid") then
+		        workspace.Camera.CameraSubject = client.Character:FindFirstChildWhichIsA("Humanoid")
+		    else
+		        workspace.Camera.CameraSubject = player.Character:FindFirstChildWhichIsA("Humanoid")        
+		    end
+		end,
+		["Send Squad"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bot Harrass"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+		["Bot Hype"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+		["TP Bots To"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name)) -- listener script will parse this and get command, players
+		end,
+		["Phone Player(Da Hood)"] = function()
+           send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Beat Player(Da Hood)"] = function()
+            send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Send my Regards!(Da Hood)"] = function()
+            send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Follow Client"] = function(i, player)
+           send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Fling Protect"] = function(i, player)
+            send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Fling Forcefield"] = function(i, player)
+		    send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Send Hit Squad"] = function(i, player)
+            send(string.format("%s! %s", i.Name, player.Name))
+        end,
+        ["Beat Everyone!"] = function()
+        
+        end
+	}
+	task.spawn(function() -- aimbot handler // was using raycast to determine if player is visible and should be locked onto, however it causes issues, ill have to look into it further to improve the aimbot, but otherwise its a strong aimbot
+		workspace.Camera.CameraType = Enum.CameraType.Scriptable
+		local aimbotTarget
+		task.spawn(function()
+			while task.wait() do
+				
+				
+				for i,v in ipairs(aimbotClients) do
+					pcall(function()
+						local rayOrigin, rayDest = client.Character.Head.Position, v.Character.Head.Position--(v.Character.Head.Position).Unit * v.Character.Humanoid.MoveDirection
+						local rayDirection = rayDest - rayOrigin
+						local params = RaycastParams.new()
+						params.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
+						local result = workspace:Raycast(rayOrigin, rayDirection, params)
+						if result and (result.Instance.Parent == v.Character or result.Instance.Parent.Parent == v.Character) --[[or result.Instance:IsA("BasePart") and result.Instance.CanCollide == false]] then
+							print(result.Instance)
+							if v.Character and #aimbotClients > 0 and v.Character.PrimaryPart then
+								if aimbotTarget then
+									local pos, vis = workspace.Camera:WorldToScreenPoint(v.Character.Head.Position)
+									if aimbotTarget:FindFirstChildWhichIsA("Humanoid"):GetState() == Enum.HumanoidStateType.Dead then
+										aimbotTarget = nil
+										return
+									end
+									if returnMag(aimbotTarget) > returnMag(v.Character) then
+										aimbotTarget = v.Character
+									end
+								else
+									aimbotTarget = v.Character	
+								end
+							else
+								if aimbotTarget == v.Character then
+									aimbotTarget = nil
+								end
+							end
+						else
+							if aimbotTarget == v.Character then
+								aimbotTarget = nil
+							end
+						end
+					end)
+				end
+			end
+		end)
+		local userinput = game:GetService("UserInputService")
+		task.spawn(function()
+			while task.wait() do
+				pcall(function()
+						--local rayOrigin, rayDest = client.Character.Head.Position, (aimbotTarget.Character.Head.Position).Unit * (aimbotTarget.Character.Humanoid.MoveDirection * aimbotTarget.Character.PrimaryPart.LookVector)
+					--	local rayDirection = rayDest - rayOrigin
+					--	local params = RaycastParams.new()
+					--	local v = aimbotTarget
+					--	params.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
+					--	local result = workspace:Raycast(rayOrigin, rayDirection, params)
+					--	if result and (result.Instance.Parent == v.Character or result.Instance.Parent.Parent == v.Character) or result.Instance:IsA("BasePart") --[[and result.Instance.CanCollide == false ]]then
+					--		print()
+					--	else
+					--		aimbotTarget = nil
+					--		return
+					--	end
+					if aimbotTarget and not paused and #aimbotClients > 0 and aimbotTarget.PrimaryPart then
+						if aimbotTarget:FindFirstChildWhichIsA("Humanoid"):GetState() == Enum.HumanoidStateType.Dead or aimbotTarget == nil or not aimbotTarget.PrimaryPart == nil then
+						aimbotTarget = nil
+						return
+						end
+						local pos, vis = workspace.Camera:WorldToScreenPoint(aimbotTarget.Head.Position)
+						--if vis then
+							if userinput.MouseBehavior.Name  == "LockCenter" then
+								if workspace.Camera.CameraType ~= Enum.CameraType.Scriptable then
+									workspace.Camera.CameraType = Enum.CameraType.Scriptable
+								end
+								workspace.Camera.CFrame = CFrame.new(workspace.Camera.CFrame.p, aimbotTarget.Head.Position)
+							else
+								workspace.Camera.CameraType = Enum.CameraType.Custom
+								if vis then
+									mousemoverel(pos.x, pos.y)
+								end
+							end
+						--else
+							--aimbotTarget = nil
+						--end
+					else
+						workspace.Camera.CameraType = Enum.CameraType.Custom
+					--	aimbotTarget = nil
+					end
+				end)
+			end
+		end)
+		mouse.Move:Connect(function()
+			pcall(function()
+				if aimbotTarget and not paused and #aimbotClients > 0 and aimbotTarget.PrimaryPart then
+						if aimbotTarget:FindFirstChildWhichIsA("Humanoid"):GetState() == Enum.HumanoidStateType.Dead or aimbotTarget == nil or not aimbotTarget.PrimaryPart == nil then
+						aimbotTarget = nil
+						return
+						end
+					local pos, vis = workspace.Camera:WorldToScreenPoint(aimbotTarget.Head.Position)
+					--if vis then
+						if  userinput.MouseBehavior.Name  == "LockCenter" then
+							if workspace.Camera.CameraType ~= Enum.CameraType.Scriptable then
+								workspace.Camera.CameraType = Enum.CameraType.Scriptable
+							end
+							workspace.Camera.CFrame = CFrame.new(workspace.Camera.CFrame.p, aimbotTarget.Head.Position)
+						else
+							workspace.Camera.CameraType = Enum.CameraType.Custom
+							mousemoverel(pos.x, pos.y)
+						end
+				--	else
+						--aimbotTarget = nil
+				--	end	
+				end
+			end)
+		end)
+	end)
+    mouse.Button1Down:Connect(function()
+        local target = mouse.Target:IsA("Model") and players:GetPlayerFromCharacter(mouse.Target) and mouse.Target or mouse.Target:IsA("BasePart") and players:GetPlayerFromCharacter(mouse.Target.Parent) and mouse.Target.Parent or players:GetPlayerFromCharacter(mouse.Target.Parent.Parent) and mouse.Target.Parent.Parent
+        if target and clickSelect then
+            selectedClient.Value = players:GetPlayerFromCharacter(target)
+            main.Parent.playerOptions.Visible = true
+		    main.Parent.playerOptions.Position = UDim2.new(0, mouse.X, 0, mouse.Y)
+	    end
+    end)
+    local CurrentCamera = workspace["CurrentCamera"] or workspace:FindFirstChildWhichIsA("Camera")
+    mouse.Button2Down:Connect(function()
+        local target = mouse.Target:IsA("Model") and players:GetPlayerFromCharacter(mouse.Target) and mouse.Target or mouse.Target:IsA("BasePart") and players:GetPlayerFromCharacter(mouse.Target.Parent) and mouse.Target.Parent or players:GetPlayerFromCharacter(mouse.Target.Parent.Parent) and mouse.Target.Parent.Parent
+        
+        if target then
+           CurrentCamera.CameraSubject = target:FindFirstChildWhichIsA("Humanoid")
+        end
+    end)
+
+	local function DestroyAllChildren(array) -- clearall doesnt allow me to save uiinstances and uses remove?
+		for i,v in ipairs(array) do
+			if v:IsA("UIListLayout") or v:IsA("ObjectValue") or v:IsA("ScrollingFrame") or v:IsA("Folder") or v:IsA("TextLabel") and not tonumber(v.Text) then
+				continue
+			end
+			v:Destroy()
+		end
+	end
+
+	clientOptions.MouseButton1Click:Connect(function()
+		DestroyAllChildren(lists[2]:GetChildren())
+		lists[2].Visible = true
+		for _,v in ipairs(lists) do
+			if v~=lists[2] then
+				DestroyAllChildren(v:GetChildren())
+				v.Visible = false
+			end
+		end
+		local newButton
+		for i,v in pairs(clientCommands) do
+		    local newButton = button:Clone() -- prevents newbutton from being pushed to the stack over and over again, atleast i think?
+			newButton = button:Clone() -- prevents newbutton from being pushed to the stack over and over again, atleast i think?
+			newButton.Name = i
+			newButton.Text = i
+			newButton.Parent = lists[2]
+			newButton.MouseButton1Click:Connect(function()
+				v(newButton)
+			end) -- lua garbage collects, will be wiped when we clear the list
+			if activeCommands[i] then
+			    newButton.TextColor3 = Color3.fromRGB(0, 255)
+			end
+			newButton.Visible = true
+		end
+	end)
+
+	games.MouseButton1Click:Connect(function()
+		DestroyAllChildren(lists[3]:GetChildren())
+		lists[3].Visible = true
+		for _,v in ipairs(lists) do
+			if v~=lists[3] then
+				DestroyAllChildren(v:GetChildren())
+				v.Visible = false
+			end
+		end
+		
+		for i,v in pairs(gamesHub) do
+			local newButton = button:Clone() -- prevents newbutton from being pushed to the stack over and over again, atleast i think?
+			newButton.Name = i
+			newButton.Text = i
+			newButton.Parent = lists[3]
+			newButton.MouseButton1Click:Connect(function()
+				local clone = script.Parent.Parent.playerOptions:Clone()
+				clone.Parent = script.Parent.Parent
+				DestroyAllChildren(clone.list:GetChildren())
+				for _,Exploit in pairs(v.Commands) do
+				    local optionV2 = temps.OptionV2:Clone() 
+			              optionV2.Name = _
+			                optionV2.Text = _
+			                optionV2.Parent = clone.list 
+		                	optionV2.Visible = true
+		              		optionV2.TextColor3 = if activeCommands[_] then Color3.fromRGB(255, 255) else optionV2.TextColor3
+			                optionV2.MouseButton1Click:Connect(function()
+				                Exploit(optionV2, v)
+				                clone:Destroy()
+			end)
+			optionV2.MouseEnter:Connect(function() -- // next 
+				optionV2.BackgroundTransparency = 0.7
+				optionV2.MouseLeave:Connect(function()
+					optionV2.BackgroundTransparency = 1
+				end)
+			end)
+				end
+				clone.Visible = true
+				clone.Position = UDim2.new(0, mouse.X, 0, mouse.Y)
+			end) -- lua garbage collects, will be wiped when we clear the list
+			newButton.Visible = true
+		end
+	end)
+
+
+
+
+
+	main.Parent.playerOptions.MouseLeave:Connect(function() main.Parent.playerOptions.Visible = false end)
+	task.spawn(function() -- background thread 
+
+		for i,v in pairs(otherPlayerOptions) do
+			local optionV2 = temps.OptionV2:Clone()
+			optionV2.Name = i
+			optionV2.Text = i
+			optionV2.TextColor3 = if activeCommands[i] then Color3.fromRGB(255, 255) else optionV2.TextColor3
+			optionV2.Parent = main.Parent.playerOptions.list
+			optionV2.Visible = true
+			optionV2.MouseButton1Click:Connect(function()
+				v(optionV2, selectedClient.Value)
+				main.Parent.playerOptions.Visible = false
+				
+				--[[if activeCommands[i] ~= nil then
+			        return table.insert(activeCommands[i], selectedClient.Value.Name)
+				end
+		        activeCommands[i] = {selectedClient.Value.Name}]]
+			end)
+			optionV2.MouseEnter:Connect(function() -- // next 
+				optionV2.BackgroundTransparency = 0.7
+				optionV2.MouseLeave:Connect(function()
+					optionV2.BackgroundTransparency = 1
+				end)
+			end)
+		end
+	end)
+--	list.CanvasSize = UDim2.new(1, 0, 0, list.UIListLayout.AbsoluteContentSize.Y)
+	otherClients.MouseButton1Click:Connect(function()
+		DestroyAllChildren(lists[4].numberList:GetChildren()) -- my theory for why it adds more players to the list when you reclick it is well its probably cause I actually never clear the list, well I could just use this loop as a cheaky way to do it.
+		DestroyAllChildren(lists[4].Clients:GetChildren())
+		--clear all everytime your clicked so no dupes happen
+
+		local numberOption = temps.numberOption -- template button for the clients number
+		lists[4].Visible = true -- client list is now visible
+		for i,v in ipairs(lists) do 
+			if i ~= 4 then -- clients list
+				v.Visible = false -- if i is not = to client list then i is now invisible
+				DestroyAllChildren(v:GetChildren()) -- see if this fixed some issues
+			end
+		end
+		task.spawn(function()
+			while lists[4].Visible do task.wait()
+				lists[4].numberList.CanvasPosition = lists[4].numberList.CanvasPosition == lists[4].Clients.CanvasPosition and lists[4].numberList.CanvasPosition or lists[4].Clients.CanvasPosition
+			end
+			DestroyAllChildren(lists[4].numberList:GetChildren()) -- my theory for why it adds more players to the list when you reclick it is well its probably cause I actually never clear the list, well I could just use this loop as a cheaky way to do it.
+			DestroyAllChildren(lists[4].Clients:GetChildren())
+		end)
+		for i,v in ipairs(game.Players:GetChildren()) do
+			if v~=client then
+				task.spawn(function()
+					local player = temps.Player -- template button for the client
+
+					numberOption = numberOption:Clone()
+					player = player:Clone()
+
+					numberOption.Text = tostring(i-1)
+					player.Text = v.Name
+
+					numberOption.Parent = lists[4].numberList
+					player.Parent = lists[4].Clients
+
+					numberOption.Visible = true
+					player.Visible = true
+					
+					if v.Team then
+						if v.Team ~= client.Team then
+							player.TextColor3 = Color3.fromRGB(255)
+						else
+							player.TextColor3 = Color3.fromRGB(0, 255)
+						end
+					end
+					player.MouseEnter:Connect(function()
+						player.BackgroundTransparency = 0.7
+						player.MouseLeave:Once(function()
+							player.BackgroundTransparency = 1
+						end)
+					end)
+					player.MouseButton1Click:Connect(function()
+						if players:FindFirstChild(player.Text) then
+							selectedClient.Value = players[player.Text]
+							main.Parent.playerOptions.Visible = true
+							main.Parent.playerOptions.Position = UDim2.new(0, mouse.X, 0, mouse.Y)
+							
+							for i,v in ipairs(otherPlayerOptions) do
+								if activeCommands[i] ~= nil then
+							    	if table.find(activeCommands[i], selectedClient.Value.Name) then
+								    	main.Parent.playerOptions.list[i].TextColor3 = Color3.fromRGB(0, 255)
+							    	else
+								    	main.Parent.playerOptions.list[i].TextColor3 = Color3.fromRGB(255, 255, 255)
+							    	end
+								end
+					        end
+						else
+							player:Destroy()
+							numberOption:Destroy()
+						end
+					end)
+					player.MouseButton2Click:Connect(function() -- right click to spectate, i needa make myself a god.
+						if players:FindFirstChild(player.Text) then
+							if CurrentCamera.CameraSubject ~= players[player.Text].Character:FindFirstChildWhichIsA("Humanoid") then
+						    	CurrentCamera.CameraSubject = players[player.Text].Character:FindFirstChildWhichIsA("Humanoid")
+						    else
+						    	CurrentCamera.CameraSubject = client.Character:FindFirstChildWhichIsA("Humanoid")
+						    end
+						end
+					end)
+				end)
+			end
+		--	clients.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+	--		local padding = clients.UIListLayout.Padding
+--	local contentSize = clients.UIListLayout.AbsoluteContentSize + Vector.new(0, padding.PaddingBottom.Offset + padding.PaddingTop.Offset)
+--	clients.CanvasSize = UDim2.new(1, contentSize.X, 2, contentSize.Y) -- padding needs to be accounted for
+		end
+	end)
+	local UserInputService = game:GetService("UserInputService") -- this already exist so im not remaking it.
+	UserInputService.InputBegan:Connect(function(key, event)
+		if key.KeyCode == Enum.KeyCode.LeftControl then
+			if main.mainList.Aimbot then
+				clientCommands["Aimbot"](main.mainList.Aimbot)	
+			end
+		end
+	end)
+	local gui = main
+
+	local dragging
+	local dragInput
+	local dragStart
+	local startPos
+	local startpos2
+	local function update(input)
+		local delta = input.Position - dragStart
+		gui:TweenPosition(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), Enum.EasingDirection.InOut, Enum.EasingStyle.Sine, 0.04, true) -- This is what I changed
+		clients_list:TweenPosition(UDim2.new(startpos2.X.Scale, startpos2.X.Offset + delta.X, startpos2.Y.Scale, startpos2.Y.Offset + delta.Y), Enum.EasingDirection.InOut, Enum.EasingStyle.Sine, 0.04, true)
+	end
+ 
+	gui.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = gui.Position
+			startpos2 = clients_list.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	gui.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+end)
+local cursorFling = false
+local tpBots = false
+local copyClientName = false
+
+--[[UIP.InputBegan:Connect(function(key, gameProcessedEvent)
+    if activeCommands["Quick Options"] then -- ive made enough commands, this is my personal mod menu, as long as i know performance and code is good i dont care about the best method
+        local keyCode = key.keyCode
+        local keys = Enum.KeyCode
+        
+        if keyCode == keys.KeypadFive then
+            cursorFling = not cursorFling
+           
+             task.spawn(function()
+                xNotify("Cursor Fling", "Cursor Fling is now "..cursorFling)
+                while cursorFling do task.wait(0.1) 
+                    writefile("mousePos.txt", mouse.Hit.p)
+                end
+                writefile("mousePos.txt", "")
+            end)
+            
+            --[[task.spawn(function()
+                xNotify("Cursor Fling", "Cursor Fling is now "..cursorFling)
+                while cursorFling do task.wait() 
+                    
+                end
+            end)
+        end
+    elseif keyCode == keys.KeypadSix then
+        tpBots = not tpBots
+        mouse.Button1Press:Connect(function()
+            if tpBots then
+                return writefile("mousePos.txt", mouse.Hit.p)
+            end
+            mouse.Button1Press:Disconnect()
+        end)
+    elseif keyCode == keys.KeypadFour then
+        writefile("mousePos.txt", Vector3.new(0, -999999, 0))
+    end
+end)]]
+task.spawn(function()-- // fly handler
+local BodyV = Instance.new("BodyVelocity", game.Players.LocalPlayer) -- may change parent to humanoidrootpart to avoid possible detection
+local Gyro = Instance.new("BodyGyro", game.Players.LocalPlayer)
+BodyV.MaxForce = Vector3.new(100000000, 100000000, 100000000)
+BodyV.P = 20000
+BodyV.Velocity = Vector3.zero
+Gyro.D = 500
+Gyro.CFrame = CFrame.new()
+Gyro.MaxTorque = Vector3.new(1600000, 1600000, 1600000)
+Gyro.P = 3000
+local currentBody
+local currentGyro
+local keyCode = Enum.KeyCode.KeypadTwo
+local character
+local windSound = Instance.new("Sound", BodyV.Parent)
+windSound.SoundId = "rbxassetid://3308152153"
+local soundOne
+local Flymoving = Instance.new("BoolValue", Gyro.Parent)
+local Flying = false
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+local xractivated = false
+
+game.Players.LocalPlayer.CharacterAdded:Connect(function(c)
+	character = c
+	currentBody = BodyV:Clone()
+	currentGyro = Gyro:Clone()
+	currentBody.Parent = c
+	currentGyro.Parent = c
+	soundOne = windSound:Clone()
+	soundOne.Parent = c
+	Flymoving = Instance.new("BoolValue", c)
+end)
+local Camera = workspace.Camera
+
+local function calcFunc()
+	if character.Humanoid.MoveDirection == Vector3.new(0, 0, 0) then
+		return character.Humanoid.MoveDirection
+	end
+	local v12 = (Camera.CFrame * CFrame.new((CFrame.new(Camera.CFrame.p, Camera.CFrame.p + Vector3.new(Camera.CFrame.lookVector.x, 0, Camera.CFrame.lookVector.z)):VectorToObjectSpace(character.Humanoid.MoveDirection)))).p - Camera.CFrame.p;
+	if v12 == Vector3.new() then
+		return v12
+	end
+	return v12.unit
+end
+
+game:GetService("RunService").RenderStepped:Connect(function()
+	if character then
+		if Flying == true then
+			character.Humanoid:ChangeState(Enum.HumanoidStateType.Running)
+			currentGyro.CFrame = game.Workspace.Camera.CFrame
+			if calcFunc() == Vector3.new(0, 0, 0) then
+				Flymoving.Value = false
+			else
+				Flymoving.Value = true
+			end
+			TweenService:Create(currentBody, TweenInfo.new(0.3), {Velocity = calcFunc() * 350}):Play()
+		end
+
+	end
+end)
+Flymoving.Changed:Connect(function(p1)
+	if p1 == true then
+		TweenService:Create(Camera, TweenInfo.new(0.5), {FieldOfView = 100}):Play()
+		soundOne:Play()
+		return
+	end
+	if p1 == false then
+		TweenService:Create(Camera, TweenInfo.new(0.5), {FieldOfView = 70}):Play()
+		soundOne:Stop()
+	end
+end)
+
+
+function _G.fly()--UIS.InputBegan:Connect(function(key, gameProcessed) // changed temporarily for mobile controls
+	
+		if Flying == false then
+			Flying = true
+			if character:FindFirstChild("HumanoidRootPart") then
+				character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, false)
+				character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, false)
+				character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+				character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, false)
+				character.HumanoidRootPart.Running.Volume = 0
+				character.Humanoid:ChangeState(Enum.HumanoidStateType.Running)
+				currentBody.Parent = character.HumanoidRootPart
+				currentGyro.Parent = character.HumanoidRootPart
+			end
+		else
+			Flying = false
+			Flymoving.Value = false
+			character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running, true)
+			character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing, true)
+			character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+			character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
+			character.HumanoidRootPart.Running.Volume = 0.65
+			character.Humanoid:ChangeState(8)
+			currentBody.Parent = character
+			currentGyro.Parent = character
+		end
+end)
+end

@@ -404,7 +404,7 @@ local gameIndexHook
 local cohost = {}
 local activeCommands = {}
 local player = game.Players.LocalPlayer
-local chatRemote = game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
+local chatRemote = game.ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents").SayMessageRequest
 local chat = player.PlayerGui:WaitForChild("Chat").Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
 
 chat.ChildAdded:Connect(function(c)
@@ -518,7 +518,7 @@ local commands = {
                         client.Character.PrimaryPart.Position = targ.Character.Head.Position
                     end)
                     local msg = string.format("Hi %s Get Rick Rolled!", targ.Name)
-                    chatRemote:FireServer(msg, "All")
+                   if not chatRemote then game.TextChatService.TextChannels.RBXGeneral:SendAsync(msg, "All") else chatRemote:FireServer(msg, "All")
                 end
             end)
         else

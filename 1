@@ -404,7 +404,7 @@ local gameIndexHook
 local cohost = {}
 local activeCommands = {}
 local player = game.Players.LocalPlayer
-local chatRemote = game.ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents").SayMessageRequest
+local chatRemote = game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
 local chat = player.PlayerGui:WaitForChild("Chat").Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
 
 chat.ChildAdded:Connect(function(c)

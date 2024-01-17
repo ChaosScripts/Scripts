@@ -404,8 +404,8 @@ local gameIndexHook
 local cohost = {}
 local activeCommands = {}
 local player = game.Players.LocalPlayer
-local chatRemote = game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest
-local chat = player.PlayerGui:WaitForChild("Chat").Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
+local chatRemote = game.ReplicatedStorage:FindFirstChild("DefaultChatSystemChatEvents").SayMessageRequest
+local chat = player.PlayerGui:FindFirstChild("Chat").Frame.ChatChannelParentFrame["Frame_MessageLogDisplay"].Scroller
 
 chat.ChildAdded:Connect(function(c)
 task.wait(2)
@@ -517,7 +517,9 @@ local commands = {
                     pcall(function()
                         client.Character.PrimaryPart.Position = targ.Character.Head.Position
                     end)
-                    local msg = string.format("Hi %s Get Rick Rolled!", targ.Name)
+                   if chatRemote and chat then
+		   		local msg = string.format("Hi %s Get Rick Rolled!", targ.Name)
+      			end
                 end
             end)
         else

@@ -2,6 +2,7 @@
     Indirect SysCalls?
     Kernel Driver
     Trampoline Hooking and Hiding in plain sight
+    Virtual Threads and sandboxing
 */
 
 #include "Header.h" // header specific information

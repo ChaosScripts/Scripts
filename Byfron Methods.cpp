@@ -10,7 +10,7 @@ _declspec(naked) void _return()
 /*
   Expects Inline asm and explicitly declares the function naked which means cleaning and setting up the function is up to you
   also is a wrapper that returns void
-/*
+*/
 {
 	_asm
 	{
